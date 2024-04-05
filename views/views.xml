@@ -1,13 +1,63 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-	<record id="view_purchase_order_line_form_inherit" model="ir.ui.view">
-		<field name="name">purchase.order.line.form.inherit</field>
-		<field name="model">purchase.order.line</field>
-		<field name="inherit_id" ref="purchase.purchase_order_line_form2"/>
-		<field name="arch" type="xml">
-			<xpath expr="//field[@name='product_id']" position="after">
-				<field name="attribute_serie_id" readonly="1"/>
-			</xpath>
-		</field>
-	</record>
+    <data>
+		<record id="view_purchase_order_line_form_inherit" model="ir.ui.view">
+			<field name="name">purchase.order.line.form.inherit</field>
+			<field name="model">purchase.order.line</field>
+			<field name="inherit_id" ref="purchase.purchase_order_line_form2"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='product_id']" position="after">
+					<field name="attribute_serie_id" readonly="1"/>
+				</xpath>
+			</field>
+		</record>
+
+        <!-- Menú principal -->
+        <menuitem id="menu_attribute_serie" name="Attribute Series" parent="sale.sale_menu_root" sequence="10"/>
+
+        <!-- Acción para abrir la vista de lista de series de atributos -->
+        <record id="action_attribute_serie" model="ir.actions.act_window">
+            <field name="name">Attribute Series</field>
+            <field name="res_model">attribute.serie</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- Menú para la acción de series de atributos -->
+        <menuitem id="menu_attribute_serie_list" name="Attribute Series" parent="menu_attribute_serie" action="action_attribute_serie" sequence="1"/>
+
+        <!-- Vista de lista para series de atributos -->
+        <record id="view_attribute_serie_tree" model="ir.ui.view">
+            <field name="name">attribute.serie.tree</field>
+            <field name="model">attribute.serie</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista de formulario para series de atributos -->
+        <record id="view_attribute_serie_form" model="ir.ui.view">
+            <field name="name">attribute.serie.form</field>
+            <field name="model">attribute.serie</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <notebook>
+                            <page string="Items">
+                                <field name="item_ids">
+                                    <tree editable="bottom">
+                                        <field name="attribute_value_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>		
+	</data>
 </odoo>

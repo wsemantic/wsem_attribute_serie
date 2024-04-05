@@ -5,6 +5,14 @@ class AttributeSerie(models.Model):
     _description = 'Attribute Serie'
 
     name = fields.Char(string='Name', required=True)
+    item_ids = fields.One2many('attribute.serie.item', 'attribute_serie_id', string='Items')
+
+class AttributeSerieItem(models.Model):
+    _name = 'attribute.serie.item'
+    _description = 'Attribute Serie Item'
+
+    attribute_serie_id = fields.Many2one('attribute.serie', string='Attribute Serie', required=True, ondelete='cascade')
+    attribute_value_id = fields.Many2one('product.attribute.value', string='Attribute Value', required=True)
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
