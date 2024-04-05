@@ -1,2 +1,2 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_attribute_serie_user,Attribute Serie User,model_attribute_serie,base.group_user,1,0,1,0
+access_attribute_serie_user,Attribute Serie User,attribute_serie,base.group_user,1,0,1,0
