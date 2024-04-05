@@ -1,2 +1,2 @@
-# wsem_attribute_serie
-Series de atributos como tallas
+# wsem_pos
+Codigos de barras
