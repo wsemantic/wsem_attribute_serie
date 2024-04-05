@@ -78,7 +78,6 @@ class PurchaseOrderLine(models.Model):
             }
     
     
-    @api.multi
     def create_variant_lines(self):
         self.ensure_one()
         variant_grid = self.read()[0]
