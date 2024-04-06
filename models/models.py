@@ -20,75 +20,6 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     attribute_serie_id = fields.Many2one('attribute.serie', string='Attribute Serie')
-    
-class PurchaseOrderLine(models.Model):
-    _inherit = 'purchase.order.line'
-
-    def _open_variant_grid_wizard(self):
-        _logger.info("WSEM crear ventana")
-        wizard = self.env['variant.grid.wizard'].create({
-            'purchase_order_line_id': self.id,
-            'attribute_serie_id': self.attribute_serie_id.id,
-        })
-        return {
-            'name': 'Cuadrícula de Variantes',
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'res_model': 'variant.grid.wizard',
-            'res_id': wizard.id,
-            'target': 'new',
-            'context': self.env.context,
-        }
-
-    @api.onchange('product_id')
-    def onchange_product_id(self):
-        _logger.info("WSEM onchange_product_id")
-        if self.product_id:
-            self.attribute_serie_id = self.product_id.attribute_serie_id
-            return self._open_variant_grid_wizard()
-        else:
-            self.attribute_serie_id = False
-
-    @api.model
-    def create(self, vals):
-        _logger.info("WSEM create product")
-        line = super(PurchaseOrderLine, self).create(vals)
-        if line.product_id:
-            line.attribute_serie_id = line.product_id.attribute_serie_id
-            # Llamar al método onchange_product_id después de asignar attribute_serie_id
-            line.onchange_product_id()
-        return line
-        
-    def create_variant_lines(self):
-        variant_grid = self.env.context.get('variant_grid', {})
-
-        for talla in variant_grid.get('tallas', []):
-            for color in variant_grid.get('colores', []):
-                cantidad = variant_grid.get(f'{talla}_{color}', 0)
-                if cantidad > 0:
-                    variante = self.product_id.product_variant_ids.filtered(lambda x: 
-                        x.attribute_value_ids.filtered(lambda y: y.name == talla) and 
-                        x.attribute_value_ids.filtered(lambda y: y.name == color))
-                    if variante:
-                        self.env['purchase.order.line'].create({
-                            'product_id': variante.id,
-                            'product_qty': cantidad,
-                            'order_id': self.order_id.id,
-                        })
-
-        return {'type': 'ir.actions.act_window_close'}
-        
-
-class VariantGridWizardCell(models.TransientModel):
-    _name = 'variant.grid.wizard.cell'
-    _description = 'Detalle de Cuadrícula de Variantes'
-
-    wizard_id = fields.Many2one('variant.grid.wizard', string="Wizard de Variantes")
-    color_id = fields.Many2one('product.attribute.value', string="Color")
-    talla_1 = fields.Char("Talla 1", force_save=True)
-    talla_2 = fields.Char("Talla 2", force_save=True)
-    talla_3 = fields.Char("Talla 3", force_save=True)
-
 class VariantGridWizard(models.TransientModel):
     _name = 'variant.grid.wizard'
     _description = 'Asistente para la Cuadrícula de Variantes'
@@ -116,3 +47,86 @@ class VariantGridWizard(models.TransientModel):
             
             # Añade el resto de tus detalles aquí.
         self.detail_ids = details
+
+    def button_accept(self):
+        # Crear las líneas de variantes según las cantidades ingresadas
+        if self.purchase_order_line_id:
+            variant_grid = {
+                'tallas': [detail.talla_1 for detail in self.detail_ids if detail.talla_1],
+                'colores': [detail.color_id.name for detail in self.detail_ids if detail.color_id],
+            }
+            for detail in self.detail_ids:
+                if detail.color_id:
+                    for talla in variant_grid['tallas']:
+                        cantidad = getattr(detail, f'{talla}_cantidad', 0)
+                        if cantidad > 0:
+                            variant_grid[f'{talla}_{detail.color_id.name}'] = cantidad
+
+            # Llamar al método create_variant_lines en la línea de pedido de compra
+            self.purchase_order_line_id.with_context(variant_grid=variant_grid).create_variant_lines()
+
+        # Devolver la acción de cierre de la ventana emergente
+        return {'type': 'ir.actions.act_window_close'}
+
+class VariantGridWizardCell(models.TransientModel):
+    _name = 'variant.grid.wizard.cell'
+    _description = 'Detalle de Cuadrícula de Variantes'
+
+    wizard_id = fields.Many2one('variant.grid.wizard', string="Wizard de Variantes")
+    color_id = fields.Many2one('product.attribute.value', string="Color")
+    talla_1 = fields.Char("Talla 1", force_save=True)
+    talla_2 = fields.Char("Talla 2", force_save=True)
+    talla_3 = fields.Char("Talla 3", force_save=True)
+    talla_1_cantidad = fields.Integer("Cantidad Talla 1")
+    talla_2_cantidad = fields.Integer("Cantidad Talla 2")
+    talla_3_cantidad = fields.Integer("Cantidad Talla 3")
+
+class PurchaseOrderLine(models.Model):
+    _inherit = 'purchase.order.line'
+
+    def _open_variant_grid_wizard(self):
+        _logger.info("WSEM abrir ventana")
+        wizard = self.env['variant.grid.wizard'].create({
+            'purchase_order_line_id': self.id,
+        })
+        return {
+            'name': 'Cuadrícula de Variantes',
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'variant.grid.wizard',
+            'res_id': wizard.id,
+            'target': 'new',
+            'context': self.env.context,
+        }
+
+    @api.onchange('product_id')
+    def onchange_product_id(self):
+        _logger.info("WSEM cambio de producto")
+        if self.product_id:
+            return self._open_variant_grid_wizard()
+
+    @api.model
+    def create(self, vals):
+        _logger.info("WSEM producto creado")
+        line = super(PurchaseOrderLine, self).create(vals)
+        if line.product_id:
+            # Llamar al método onchange_product_id después de crear la línea
+            line.onchange_product_id()
+        return line
+
+    def create_variant_lines(self):
+        variant_grid = self.env.context.get('variant_grid', {})
+
+        for talla in variant_grid.get('tallas', []):
+            for color in variant_grid.get('colores', []):
+                cantidad = variant_grid.get(f'{talla}_{color}', 0)
+                if cantidad > 0:
+                    variante = self.product_id.product_variant_ids.filtered(lambda x: 
+                        x.attribute_value_ids.filtered(lambda y: y.name == talla) and 
+                        x.attribute_value_ids.filtered(lambda y: y.name == color))
+                    if variante:
+                        self.env['purchase.order.line'].create({
+                            'product_id': variante.id,
+                            'product_qty': cantidad,
+                            'order_id': self.order_id.id,
+                        })
