@@ -1,4 +1,6 @@
 from odoo import models, fields, api
+import logging
+_logger = logging.getLogger(__name__)
 
 class AttributeSerie(models.Model):
     _name = 'attribute.serie'
@@ -26,6 +28,7 @@ class PurchaseOrderLine(models.Model):
 
     @api.onchange('product_id')
     def onchange_product_id(self):
+        _logger.info("WSEM onchange_product_id")
         if self.product_id:
             self.attribute_serie_id = self.product_id.attribute_serie_id
             # Lógica para abrir el wizard con datos pre-cargados
