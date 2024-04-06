@@ -22,7 +22,7 @@ class ProductTemplate(models.Model):
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
-    attribute_serie_id = fields.Many2one('attribute.serie', string='Attribute Serie', related='product_id.attribute_serie_id', readonly=True)
+    attribute_serie_id = fields.Many2one('attribute.serie', string='Attribute Serie', related='product_id.attribute_serie_id')
 
     @api.onchange('product_id')
     def onchange_product_id(self):
@@ -33,8 +33,11 @@ class PurchaseOrderLine(models.Model):
     @api.onchange('product_id')
     def create_variant_grid(self):
         if self.product_id and self.attribute_serie_id:
-            # Obtener las tallas de la serie del producto
-            tallas = self.attribute_serie_id.talla_ids.mapped('name')
+            # Obtener los valores de atributo de la serie seleccionada
+            attribute_values = self.attribute_serie_id.item_ids.mapped('attribute_value_id')
+
+            # Obtener las tallas de la serie seleccionada
+            tallas = attribute_values.filtered(lambda x: x.attribute_id.name == 'Talla').mapped('name')
 
             # Obtener todos los colores posibles para el producto
             colores = self.product_id.attribute_line_ids.filtered(lambda x: x.attribute_id.name == 'Color').value_ids.mapped('name')
@@ -87,16 +90,17 @@ class PurchaseOrderLine(models.Model):
     
     
     def create_variant_lines(self):
-        self.ensure_one()
-        variant_grid = self.read()[0]
+        variant_grid = self.env.context.get('variant_grid', {})
 
-        for talla in variant_grid['tallas']:
-            for color in variant_grid['colores']:
-                cantidad = variant_grid.get('%s_%s' % (talla, color), 0)
+        for talla in variant_grid.get('tallas', []):
+            for color in variant_grid.get('colores', []):
+                cantidad = variant_grid.get(f'{talla}_{color}', 0)
                 if cantidad > 0:
-                    variante = self.product_id.product_variant_ids.filtered(lambda x: x.attribute_value_ids.filtered(lambda y: y.name == talla) and x.attribute_value_ids.filtered(lambda y: y.name == color))
+                    variante = self.product_id.product_variant_ids.filtered(lambda x: 
+                        x.attribute_value_ids.filtered(lambda y: y.name == talla) and 
+                        x.attribute_value_ids.filtered(lambda y: y.name == color))
                     if variante:
-                        self.create({
+                        self.env['purchase.order.line'].create({
                             'product_id': variante.id,
                             'product_qty': cantidad,
                             'order_id': self.order_id.id,
