@@ -47,25 +47,30 @@ class PurchaseOrderLine(models.Model):
                 'context': self.env.context,
             }
 
+    def create(self, vals):
+        if vals.get('product_id'):
+            product_id = self.env['product.product'].browse(vals['product_id'])
+            vals['attribute_serie_id'] = product_id.attribute_serie_id.id
+        return super(PurchaseOrderLine, self).create(vals)
         
-        def create_variant_lines(self):
-            variant_grid = self.env.context.get('variant_grid', {})
+    def create_variant_lines(self):
+        variant_grid = self.env.context.get('variant_grid', {})
 
-            for talla in variant_grid.get('tallas', []):
-                for color in variant_grid.get('colores', []):
-                    cantidad = variant_grid.get(f'{talla}_{color}', 0)
-                    if cantidad > 0:
-                        variante = self.product_id.product_variant_ids.filtered(lambda x: 
-                            x.attribute_value_ids.filtered(lambda y: y.name == talla) and 
-                            x.attribute_value_ids.filtered(lambda y: y.name == color))
-                        if variante:
-                            self.env['purchase.order.line'].create({
-                                'product_id': variante.id,
-                                'product_qty': cantidad,
-                                'order_id': self.order_id.id,
-                            })
+        for talla in variant_grid.get('tallas', []):
+            for color in variant_grid.get('colores', []):
+                cantidad = variant_grid.get(f'{talla}_{color}', 0)
+                if cantidad > 0:
+                    variante = self.product_id.product_variant_ids.filtered(lambda x: 
+                        x.attribute_value_ids.filtered(lambda y: y.name == talla) and 
+                        x.attribute_value_ids.filtered(lambda y: y.name == color))
+                    if variante:
+                        self.env['purchase.order.line'].create({
+                            'product_id': variante.id,
+                            'product_qty': cantidad,
+                            'order_id': self.order_id.id,
+                        })
 
-            return {'type': 'ir.actions.act_window_close'}
+        return {'type': 'ir.actions.act_window_close'}
         
 
 class VariantGridWizardCell(models.TransientModel):
