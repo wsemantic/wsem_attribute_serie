@@ -20,10 +20,12 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     attribute_serie_id = fields.Many2one('attribute.serie', string='Attribute Serie')
+    
 class VariantGridWizard(models.TransientModel):
     _name = 'variant.grid.wizard'
     _description = 'Asistente para la Cuadrícula de Variantes'
 
+    purchase_order_line_id = fields.Many2one('purchase.order.line', string="Línea de Pedido de Compra")
     attribute_serie_id = fields.Many2one('attribute.serie', string="Serie de Atributos")
     detail_ids = fields.One2many('variant.grid.wizard.cell', 'wizard_id', string='Detalles')
 
