@@ -109,9 +109,9 @@ class PurchaseOrderLine(models.Model):
             wizard = self.env['variant.grid.wizard'].create({
                 'purchase_order_line_id': self.id,
             })
-            action = self.env.ref('wsem_attribute_serie.action_open_variant_grid_wizard').read()[0]
+            action = self.env['ir.actions.act_window']._for_xml_id('wsem_attribute_serie.action_open_variant_grid_wizard')
             action['res_id'] = wizard.id
-            return self.do_action(action)
+            return self.env.do_action(action)
             
     @api.model
     def create(self, vals):
