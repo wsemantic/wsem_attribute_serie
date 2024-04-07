@@ -87,11 +87,11 @@ class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
     def _open_variant_grid_wizard(self):
-        _logger.info("WSEM abrir ventana.v2")
+        _logger.info("WSEM abrir ventana")
         wizard = self.env['variant.grid.wizard'].create({
             'purchase_order_line_id': self.id,
         })
-        return {
+        return self.env['ir.actions.act_window'].with_context().create({
             'name': 'Cuadrícula de Variantes',
             'type': 'ir.actions.act_window',
             'view_mode': 'form',
@@ -99,19 +99,14 @@ class PurchaseOrderLine(models.Model):
             'res_id': wizard.id,
             'target': 'new',
             'context': self.env.context,
-        }
+        }).read()[0]
 
     @api.onchange('product_id')
     def onchange_product_id(self):
         _logger.info("WSEM cambio de producto")
         if self.product_id:
             self.ensure_one()
-            wizard = self.env['variant.grid.wizard'].create({
-                'purchase_order_line_id': self.id,
-            })
-            action = self.env['ir.actions.act_window']._for_xml_id('wsem_attribute_serie.action_open_variant_grid_wizard')
-            action['res_id'] = wizard.id
-            return self.env.do_action(action)
+            return self._open_variant_grid_wizard()
             
     @api.model
     def create(self, vals):
