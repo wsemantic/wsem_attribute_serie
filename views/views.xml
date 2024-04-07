@@ -81,7 +81,7 @@
 		<record id="action_variant_grid_wizard" model="ir.actions.act_window">
 			<field name="name">Abrir Cuadrícula de Variantes</field>
 			<field name="type">ir.actions.act_window</field>
-			<field name="res_model">wsem.attribute.serie.variant.grid.wizard</field>
+			<field name="res_model">wsem_attribute_serie.variant.grid.wizard</field>
 			<field name="view_mode">form</field>
 			<field name="target">new</field>
 		</record>
