@@ -87,7 +87,7 @@ class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
     def _open_variant_grid_wizard(self):
-        _logger.info("WSEM abrir ventana")
+        _logger.info("WSEM abrir ventana.v2")
         wizard = self.env['variant.grid.wizard'].create({
             'purchase_order_line_id': self.id,
         })
