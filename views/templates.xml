@@ -1,34 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
-<!-- views/variant_grid_template.xml -->
-
-		<template id="variant_grid_template">
-			<t t-name="module_name.variant_grid_template">
-				<table class="table">
-					<thead>
-						<!-- Esta fila actúa como los "encabezados dinámicos" -->
-						<tr>
-							<th>Color / Talla</th>
-							<th><t t-esc="talla_1_name"/></th>
-							<th><t t-esc="talla_2_name"/></th>
-							<th><t t-esc="talla_3_name"/></th>
-						</tr>
-					</thead>
-					<tbody>
-						<!-- Itera sobre los registros de color para llenar las filas -->
-						<t t-foreach="colores" t-as="color">
-							<tr>
-								<td t-esc="color.name"/>
-								<!-- Asumiendo que tienes una forma de acceder a las cantidades por talla para cada color.
-									 Puedes adaptar esta sección según tu modelo de datos. -->
-								<td><t t-esc="color.talla_1_qty"/></td>
-								<td><t t-esc="color.talla_2_qty"/></td>
-								<td><t t-esc="color.talla_3_qty"/></td>
-							</tr>
-						</t>
-					</tbody>
-				</table>
-			</t>
-		</template>
+        <template id="variant_grid_template">
+            <t t-name="module_name.variant_grid_template">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Color / Talla</th>
+                            <th><t t-esc="talla_1_name"/></th>
+                            <th><t t-esc="talla_2_name"/></th>
+                            <th><t t-esc="talla_3_name"/></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="colores" t-as="color">
+                            <tr>
+                                <td t-esc="color.name"/>
+                                <td><t t-esc="color.talla_1_qty"/></td>
+                                <td><t t-esc="color.talla_2_qty"/></td>
+                                <td><t t-esc="color.talla_3_qty"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </t>
+        </template>
     </data>
 </odoo>

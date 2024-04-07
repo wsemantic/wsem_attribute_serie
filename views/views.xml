@@ -80,5 +80,22 @@
 			<field name="target">new</field>
 		</record>
 
+        <record id="variant_grid_wizard_view_form" model="ir.ui.view">
+            <field name="name">variant.grid.wizard.form</field>
+            <field name="model">variant.grid.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Variant Grid Wizard">
+                    <group>
+                        <field name="purchase_order_line_id" invisible="1"/>
+                        <field name="attribute_serie_id"/>
+                    </group>
+                    <t t-call="module_name.variant_grid_template"/>
+                    <footer>
+                        <button name="button_accept" type="object" string="Aceptar" class="oe_highlight"/>
+                        <button string="Cancelar" class="btn btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
 	</data>
 </odoo>
