@@ -106,8 +106,12 @@ class PurchaseOrderLine(models.Model):
         _logger.info("WSEM cambio de producto")
         if self.product_id:
             self.ensure_one()
-            wizard_action = self._open_variant_grid_wizard()
-            return wizard_action
+            wizard = self.env['variant.grid.wizard'].create({
+                'purchase_order_line_id': self.id,
+            })
+            action = self.env.ref('tu_modulo.action_open_variant_grid_wizard').read()[0]
+            action['res_id'] = wizard.id
+            return self.do_action(action)
             
     @api.model
     def create(self, vals):
