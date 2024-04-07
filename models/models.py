@@ -96,8 +96,7 @@ class PurchaseOrderLine(models.Model):
             'view_mode': 'form',
             'res_model': 'variant.grid.wizard',
             'res_id': wizard.id,
-            'target': 'new',
-            'context': self.env.context,
+            'target': 'new'
         }
 
     @api.onchange('product_id')
