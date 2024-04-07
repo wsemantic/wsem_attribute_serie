@@ -90,15 +90,10 @@ class PurchaseOrderLine(models.Model):
         wizard = self.env['variant.grid.wizard'].create({
             'purchase_order_line_id': self.id,
         })
-        return {
-            'name': 'Cuadrícula de Variantes',
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'res_model': 'variant.grid.wizard',
-            'res_id': wizard.id,
-            'target': 'new',
-            'context': self.env.context,
-        }
+        action = self.env.ref('your_module.action_variant_grid_wizard').read()[0]
+        action['res_id'] = wizard.id
+        action['context'] = self.env.context
+        return action
 
     @api.onchange('product_id')
     def onchange_product_id(self):
