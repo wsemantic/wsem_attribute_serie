@@ -59,14 +59,6 @@
 				</xpath>
 			</field>
 		</record>
-		
-		<record id="action_open_variant_grid_wizard" model="ir.actions.act_window">
-			<field name="name">Cuadrícula de Variantes</field>
-			<field name="type">ir.actions.act_window</field>
-			<field name="res_model">variant.grid.wizard</field>
-			<field name="view_mode">form</field>
-			<field name="target">new</field>
-		</record>
 
         <record id="variant_grid_wizard_view_form" model="ir.ui.view">
             <field name="name">variant.grid.wizard.form</field>
