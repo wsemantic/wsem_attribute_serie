@@ -106,9 +106,9 @@ class PurchaseOrderLine(models.Model):
         _logger.info("WSEM cambio de producto")
         if self.product_id:
             self.ensure_one()
-            self._open_variant_grid_wizard()
-            return {'value': {}}  # Actualiza esto con los valores reales si es necesario
-
+            wizard_action = self._open_variant_grid_wizard()
+            return wizard_action
+            
     @api.model
     def create(self, vals):
         _logger.info("WSEM producto creado")
