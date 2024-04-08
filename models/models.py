@@ -83,8 +83,9 @@ class VariantGridWizard(models.TransientModel):
         self.talla_2_nombre = nombres_tallas[1] if len(nombres_tallas) > 1 else ""
         self.talla_3_nombre = nombres_tallas[2] if len(nombres_tallas) > 2 else ""
         
-        _logger.info(f"WSEM talla 1 {self.talla_1_nombre}")
+        
         if self.talla_1_nombre:
+            _logger.info(f"WSEM talla 1 {self.talla_1_nombre}")
             for line in self.line_ids:
                 line.talla_1 = self.talla_1_nombre
         # Si una talla no está presente, sus cantidades en las líneas deberían ser limpiadas
