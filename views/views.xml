@@ -69,16 +69,13 @@
 						<group>
 							<field name="purchase_order_line_id" invisible="1"/>
 							<field name="attribute_serie_id"/>
-							<field name="talla_1" invisible="1"/>
-							<field name="talla_2" invisible="1"/>
-							<field name="talla_3" invisible="1"/>
 						</group>
 						<field name="line_ids" widget="one2many" colspan="4" nolabel="1">
 							<tree editable="bottom">
 								<field name="color_id"/>
-								<field name="talla_1" attrs="{'column_invisible': ['|', ('parent.talla_1', '=', False), ('parent.talla_1', '=', '')]}"/>
-								<field name="talla_2" attrs="{'column_invisible': ['|', ('parent.talla_2', '=', False), ('parent.talla_2', '=', '')]}"/>
-								<field name="talla_3" attrs="{'column_invisible': ['|', ('parent.talla_3', '=', False), ('parent.talla_3', '=', '')]}"/>
+								<field name="talla_1" attrs="{'column_invisible': [('talla_1', '=', False)]}"/>
+								<field name="talla_2" attrs="{'column_invisible': [('talla_2', '=', False)]}"/>
+								<field name="talla_3" attrs="{'column_invisible': [('talla_3', '=', False)]}"/>
 							</tree>
 							<form>
 								<group>
