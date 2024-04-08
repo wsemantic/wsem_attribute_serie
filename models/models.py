@@ -95,22 +95,6 @@ class PurchaseOrderLine(models.Model):
         action['context'] = self.env.context
         return action
 
-    @api.onchange('product_id')
-    def onchange_product_id(self):
-        _logger.info("WSEM cambio de producto")
-        if self.product_id:
-            self.ensure_one()
-            return self._open_variant_grid_wizard()
-            
-    @api.model
-    def create(self, vals):
-        _logger.info("WSEM producto creado")
-        line = super(PurchaseOrderLine, self).create(vals)
-        if line.product_id:
-            # Llamar al método onchange_product_id después de crear la línea
-            line.onchange_product_id()
-        return line
-
     def create_variant_lines(self):
         variant_grid = self.env.context.get('variant_grid', {})
 

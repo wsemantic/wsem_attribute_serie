@@ -86,5 +86,18 @@
 			<field name="target">new</field>
 		</record>
 
+		<record id="purchase_order_form_inherit_lines_button" model="ir.ui.view">
+            <field name="name">purchase.order.form.inherit.lines.button</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']/tree" position="inside">
+                    <!-- Añadir botón en la vista de lista de las líneas de pedido. -->
+                    <field name="dummy" invisible="1"/>
+                    <button name="_open_variant_grid_wizard" type="object" string="Abrir Wizard"/>
+                </xpath>
+            </field>
+        </record>
+		
 	</data>
 </odoo>
