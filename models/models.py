@@ -85,10 +85,10 @@ class VariantGridWizard(models.TransientModel):
         # Si una talla no está presente, sus cantidades en las líneas deberían ser limpiadas
         if not self.talla_2_nombre:
             for line in self.line_ids:
-                line.talla_2_cantidad = False
+                line.talla_2 = False
         if not self.talla_3_nombre:
             for line in self.line_ids:
-                line.talla_3_cantidad = False
+                line.talla_3 = False
 
 
                     
@@ -102,7 +102,7 @@ class VariantGridWizard(models.TransientModel):
             for detail in self.detail_ids:
                 if detail.color_id:
                     for talla in variant_grid['tallas']:
-                        cantidad = getattr(detail, f'{talla}_cantidad', 0)
+                        cantidad = getattr(detail, f'{talla}', 0)
                         if cantidad > 0:
                             variant_grid[f'{talla}_{detail.color_id.name}'] = cantidad
 
