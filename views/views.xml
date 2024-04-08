@@ -69,6 +69,9 @@
 						<group>
 							<field name="purchase_order_line_id" invisible="1"/>
 							<field name="attribute_serie_id"/>
+							<field name="talla_1" invisible="1"/>
+							<field name="talla_2" invisible="1"/>
+							<field name="talla_3" invisible="1"/>
 						</group>
 						<field name="line_ids" widget="one2many" colspan="4" nolabel="1">
 							<tree editable="bottom">
