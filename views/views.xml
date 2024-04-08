@@ -93,7 +93,6 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='order_line']/tree" position="inside">
                     <!-- Añadir botón en la vista de lista de las líneas de pedido. -->
-                    <field name="dummy" invisible="1"/>
                     <button name="_open_variant_grid_wizard" type="object" string="Abrir Wizard"/>
                 </xpath>
             </field>
