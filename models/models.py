@@ -41,60 +41,33 @@ class VariantGridWizard(models.TransientModel):
     @api.model
     def default_get(self, fields_list):
         res = super(VariantGridWizard, self).default_get(fields_list)
-        # Buscar todos los valores de atributo de color disponibles
-        color_attribute_values = self.env['product.attribute.value'].search([('attribute_id.name', '=', 'Color')])
-
-        line_vals = []
-        for color_value in color_attribute_values:
-            # Para cada color, crear una línea con las cantidades inicializadas a nulo (o cero)
-            line_vals.append((0, 0, {
-                'color_id': color_value.id,
-                'talla_1': 0,  # o `False` si prefieres inicializar como nulo
-                'talla_2': 0,  # o `False`
-                'talla_3': 0,  # o `False`
-            }))
-        
-        res['line_ids'] = line_vals
+        # Inicializar la "fila de encabezado" con valores predeterminados para las tallas
+        res['line_ids'] = [(0, 0, {'color_id': False, 'talla_1': 'Talla 1', 'talla_2': 'Talla 2', 'talla_3': 'Talla 3'})]
         return res
 
 
-    
-
     @api.onchange('attribute_serie_id')
     def _onchange_attribute_serie_id(self):
-        _logger.info("WSEM onchange_attribute_serie")
-        # Si no hay serie seleccionada, dejar los nombres de tallas en blanco
-        if not self.attribute_serie_id:
-            self.talla_1_nombre = ""
-            self.talla_2_nombre = ""
-            self.talla_3_nombre = ""
-            for line in self.line_ids:
-                line.talla_1 = False  # Asumiendo que quieras limpiar las cantidades también
-                line.talla_2 = False
-                line.talla_3 = False
-            return
+        if self.attribute_serie_id:
+            # Obtener los nombres de las tallas de la serie seleccionada
+            tallas = self.attribute_serie_id.item_ids.mapped('attribute_value_id')
+            nombres_tallas = [talla.name for talla in tallas][:3]
 
-        # Obtener los nombres de las tallas de la serie seleccionada
-        tallas = self.attribute_serie_id.item_ids.mapped('attribute_value_id')
-        nombres_tallas = [talla.name for talla in tallas]
+            # Asegurarse de que hay al menos 3 nombres (rellenar con vacío si es necesario)
+            nombres_tallas += [""] * (3 - len(nombres_tallas))
+            _logger.info(f"WSEM talla 1 {nombres_tallas[0]}")
+            # Actualizar la fila de encabezado (asumiendo que siempre es la primera línea)
+            if self.line_ids:
+                self.line_ids[0].talla_1 = nombres_tallas[0]
+                self.line_ids[0].talla_2 = nombres_tallas[1]
+                self.line_ids[0].talla_3 = nombres_tallas[2]
+        else:
+            # Si no hay serie seleccionada, reiniciar a los valores predeterminados
+            if self.line_ids:
+                self.line_ids[0].talla_1 = 'Talla 1'
+                self.line_ids[0].talla_2 = 'Talla 2'
+                self.line_ids[0].talla_3 = 'Talla 3'
 
-        # Actualizar los nombres de las tallas
-        self.talla_1_nombre = nombres_tallas[0] if len(nombres_tallas) > 0 else ""
-        self.talla_2_nombre = nombres_tallas[1] if len(nombres_tallas) > 1 else ""
-        self.talla_3_nombre = nombres_tallas[2] if len(nombres_tallas) > 2 else ""
-        
-        
-        if self.talla_1_nombre:
-            _logger.info(f"WSEM talla 1 {self.talla_1_nombre}")
-            for line in self.line_ids:
-                line.talla_1 = self.talla_1_nombre
-        # Si una talla no está presente, sus cantidades en las líneas deberían ser limpiadas
-        if not self.talla_2_nombre:
-            for line in self.line_ids:
-                line.talla_2 = False
-        if not self.talla_3_nombre:
-            for line in self.line_ids:
-                line.talla_3 = False
 
 
                     
@@ -123,7 +96,12 @@ class VariantGridWizardLine(models.TransientModel):
     _description = 'Línea de Wizard para Cuadrícula de Variantes'
 
     wizard_id = fields.Many2one('variant.grid.wizard', string="Wizard de Variantes", required=True, ondelete='cascade')
-    color_id = fields.Many2one('product.attribute.value', string="Color", required=True)
+    color_id = fields.Many2one(
+        'product.attribute.value',
+        string='Color',
+        domain="[('attribute_id.name', '=', 'Color')]"
+    )
+    
     talla_1 = fields.Char("Talla 1")
     talla_2 = fields.Char("Talla 2")
     talla_3 = fields.Char("Talla 3")
