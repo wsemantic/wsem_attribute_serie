@@ -92,41 +92,6 @@
 						<button string="Cancelar" class="btn btn-default" special="cancel"/>
 					</footer>
 				</form>
-					<script>
-						$(document).ready(function() {
-							console.log("Document ready");
-
-							var $attributeSerieField = $('input[name="attribute_serie_id"]');
-							var $tableHeader = $('table.o_list_view thead tr');
-
-							function updateTableHeader() {
-								console.log("updateTableHeader called");
-
-								var attributeSerieName = $attributeSerieField.val();
-								console.log("Selected attribute_serie_id:", attributeSerieName);
-
-								if (attributeSerieName) {
-									var attributeSerie = $attributeSerieField.data('record');
-									var tallaNames = attributeSerie.data.item_ids.data.map(function(item) {
-										return item.data.attribute_value_id.data.display_name;
-									});
-									console.log("Talla names:", tallaNames);
-
-									$tableHeader.find('th').slice(1).each(function(index) {
-										$(this).text(tallaNames[index] || '');
-									});
-								}
-							}
-
-							$attributeSerieField.change(function() {
-								console.log("attribute_serie_id changed");
-								updateTableHeader();
-							});
-
-							updateTableHeader();
-						});
-					</script>
-
 
 			</field>
 		</record>
