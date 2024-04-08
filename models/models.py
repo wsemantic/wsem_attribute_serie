@@ -31,6 +31,7 @@ class VariantGridWizard(models.TransientModel):
 
     @api.onchange('attribute_serie_id')
     def onchange_attribute_serie_id(self):
+        _logger.info("WSEM onchange_attribute_serie_id")
         details = []
         if self.attribute_serie_id:
             tallas = self.attribute_serie_id.item_ids.mapped('attribute_value_id')
