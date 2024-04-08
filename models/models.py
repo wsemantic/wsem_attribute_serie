@@ -34,41 +34,62 @@ class VariantGridWizard(models.TransientModel):
     
     line_ids = fields.One2many('variant.grid.wizard.line', 'wizard_id', string="Líneas")
     
+    talla_1_nombre = fields.Char("Talla 1 Nombre", default="T1")
+    talla_2_nombre = fields.Char("Talla 2 Nombre", default="T2")
+    talla_3_nombre = fields.Char("Talla 3 Nombre", default="T3")
+    
     @api.model
     def default_get(self, fields_list):
         res = super(VariantGridWizard, self).default_get(fields_list)
-        color_ids = self.env['product.attribute.value'].search([('attribute_id.name', '=', 'Color')])
-        
+        # Buscar todos los valores de atributo de color disponibles
+        color_attribute_values = self.env['product.attribute.value'].search([('attribute_id.name', '=', 'Color')])
+
         line_vals = []
-        for color in color_ids:
+        for color_value in color_attribute_values:
+            # Para cada color, crear una línea con las cantidades inicializadas a nulo (o cero)
             line_vals.append((0, 0, {
-                'color_id': color.id,
-                'talla_1': 'Talla 1',
-                'talla_2': 'Talla 2',
-                'talla_3': 'Talla 3',
+                'color_id': color_value.id,
+                'talla_1_cantidad': 0,  # o `False` si prefieres inicializar como nulo
+                'talla_2_cantidad': 0,  # o `False`
+                'talla_3_cantidad': 0,  # o `False`
             }))
         
         res['line_ids'] = line_vals
         return res
 
+
     
 
     @api.onchange('attribute_serie_id')
     def _onchange_attribute_serie_id(self):
-        if self.attribute_serie_id:
-            tallas = self.attribute_serie_id.item_ids.mapped('attribute_value_id')
-            
-            # Asumimos que siempre hay 3 tallas como máximo.
-            nombres_tallas = [talla.name for talla in tallas[:3]]
-            
-            # Rellenar con nombres genéricos si hay menos de 3 tallas
-            while len(nombres_tallas) < 3:
-                nombres_tallas.append("Talla {}".format(len(nombres_tallas) + 1))
-            
+        # Si no hay serie seleccionada, dejar los nombres de tallas en blanco
+        if not self.attribute_serie_id:
+            self.talla_1_nombre = ""
+            self.talla_2_nombre = ""
+            self.talla_3_nombre = ""
             for line in self.line_ids:
-                line.talla_1 = nombres_tallas[0] if len(nombres_tallas) > 0 else 'Talla 1'
-                line.talla_2 = nombres_tallas[1] if len(nombres_tallas) > 1 else 'Talla 2'
-                line.talla_3 = nombres_tallas[2] if len(nombres_tallas) > 2 else 'Talla 3'
+                line.talla_1_cantidad = False  # Asumiendo que quieras limpiar las cantidades también
+                line.talla_2_cantidad = False
+                line.talla_3_cantidad = False
+            return
+
+        # Obtener los nombres de las tallas de la serie seleccionada
+        tallas = self.attribute_serie_id.item_ids.mapped('attribute_value_id')
+        nombres_tallas = [talla.name for talla in tallas]
+
+        # Actualizar los nombres de las tallas
+        self.talla_1_nombre = nombres_tallas[0] if len(nombres_tallas) > 0 else ""
+        self.talla_2_nombre = nombres_tallas[1] if len(nombres_tallas) > 1 else ""
+        self.talla_3_nombre = nombres_tallas[2] if len(nombres_tallas) > 2 else ""
+        
+        # Si una talla no está presente, sus cantidades en las líneas deberían ser limpiadas
+        if not self.talla_2_nombre:
+            for line in self.line_ids:
+                line.talla_2_cantidad = False
+        if not self.talla_3_nombre:
+            for line in self.line_ids:
+                line.talla_3_cantidad = False
+
 
                     
     def button_accept(self):
