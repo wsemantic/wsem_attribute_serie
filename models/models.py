@@ -39,11 +39,14 @@ class VariantGridWizard(models.TransientModel):
         _logger.info("WSEM _onchange_attribute_serie_id")
         # Limpiar las líneas existentes
         self.line_ids = [(5, 0, 0)]
+        _logger.info("WSEM iniciliazdo line_ids")
         # Asumiendo que tu modelo de serie de atributos tiene acceso a los colores y sus tallas
         if self.attribute_serie_id:
+            _logger.info("WSEM existe attribute_serie_id")
             # Aquí deberías implementar la lógica para poblar `line_ids` basado en la serie seleccionada
             # Esto es un ejemplo simplificado
             for color in self.env['product.attribute.value'].search([]): # Esto es solo un placeholder, ajusta según tu modelo de datos
+                _logger.info("WSEM itera color")
                 self.line_ids.create({
                     'color_id': color.id,
                     'wizard_id': self.id,
