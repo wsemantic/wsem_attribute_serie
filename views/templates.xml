@@ -14,7 +14,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr t-foreach="wizard.line_ids" t-as="line">
+						<tr t-foreach="line_ids" t-as="line">
 							<td>
 								<span t-field="line.color_id.name"/>
 							</td>
