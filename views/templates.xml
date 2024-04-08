@@ -2,33 +2,37 @@
     <data>
 <!-- views/variant_grid_template.xml -->
 
-		<template id="variant_grid_template">
-			<t t-name="wsem_attribute_serie.variant_grid_template">
-				<table class="table">
+		<template id="variant_grid_template" t-name="wsem_attribute_serie.variant_grid_template">
+			<div class="o_form_sheet">
+				<table class="table table-bordered">
 					<thead>
-						<!-- Esta fila actúa como los "encabezados dinámicos" -->
 						<tr>
 							<th>Color</th>
-							<th t-esc="wizard.detail_ids[0].talla_1" t-if="wizard.detail_ids[0].talla_1"/>
-							<th t-esc="wizard.detail_ids[0].talla_2" t-if="wizard.detail_ids[0].talla_2"/>
-							<th t-esc="wizard.detail_ids[0].talla_3" t-if="wizard.detail_ids[0].talla_3"/>
+							<th>Talla 1</th>
+							<th>Talla 2</th>
+							<th>Talla 3</th>
 						</tr>
 					</thead>
 					<tbody>
-						<!-- Itera sobre los registros de color para llenar las filas -->
-						<t t-foreach="colores" t-as="color">
-							<tr>
-								<td t-esc="color.name"/>
-								<!-- Asumiendo que tienes una forma de acceder a las cantidades por talla para cada color.
-									 Puedes adaptar esta sección según tu modelo de datos. -->
-								<td><t t-esc="color.talla_1_qty"/></td>
-								<td><t t-esc="color.talla_2_qty"/></td>
-								<td><t t-esc="color.talla_3_qty"/></td>
-							</tr>
-						</t>
+						<tr t-foreach="wizard.line_ids" t-as="line">
+							<td>
+								<span t-field="line.color_id.name"/>
+							</td>
+							<td>
+								<input type="number" t-att-value="line.cantidad_talla_1" t-on-change="onchange_line(line, 1)"/>
+							</td>
+							<td>
+								<input type="number" t-att-value="line.cantidad_talla_2" t-on-change="onchange_line(line, 2)"/>
+							</td>
+							<td>
+								<input type="number" t-att-value="line.cantidad_talla_3" t-on-change="onchange_line(line, 3)"/>
+							</td>
+						</tr>
 					</tbody>
 				</table>
-			</t>
+			</div>
 		</template>
+
+
     </data>
 </odoo>
