@@ -33,25 +33,43 @@ class VariantGridWizard(models.TransientModel):
     # y que contiene referencias a las tallas (p.ej., mediante un campo One2many hacia `attribute.serie.item`)
     
     line_ids = fields.One2many('variant.grid.wizard.line', 'wizard_id', string="Líneas")
+    
+    @api.model
+    def default_get(self, fields_list):
+        res = super(VariantGridWizard, self).default_get(fields_list)
+        color_ids = self.env['product.attribute.value'].search([('attribute_id.name', '=', 'Color')])
+        
+        line_vals = []
+        for color in color_ids:
+            line_vals.append((0, 0, {
+                'color_id': color.id,
+                'talla_1': 'Talla 1',
+                'talla_2': 'Talla 2',
+                'talla_3': 'Talla 3',
+            }))
+        
+        res['line_ids'] = line_vals
+        return res
+
+    
 
     @api.onchange('attribute_serie_id')
     def _onchange_attribute_serie_id(self):
-        _logger.info("WSEM _onchange_attribute_serie_id")
-        # Limpiar las líneas existentes
-        self.line_ids = [(5, 0, 0)]
-
         if self.attribute_serie_id:
-            # Obtener las tallas de la serie
             tallas = self.attribute_serie_id.item_ids.mapped('attribute_value_id')
+            
+            # Asumimos que siempre hay 3 tallas como máximo.
+            nombres_tallas = [talla.name for talla in tallas[:3]]
+            
+            # Rellenar con nombres genéricos si hay menos de 3 tallas
+            while len(nombres_tallas) < 3:
+                nombres_tallas.append("Talla {}".format(len(nombres_tallas) + 1))
+            
+            for line in self.line_ids:
+                line.talla_1 = nombres_tallas[0] if len(nombres_tallas) > 0 else 'Talla 1'
+                line.talla_2 = nombres_tallas[1] if len(nombres_tallas) > 1 else 'Talla 2'
+                line.talla_3 = nombres_tallas[2] if len(nombres_tallas) > 2 else 'Talla 3'
 
-            # Actualizar las tallas en las líneas del wizard
-            for color in self.env['product.attribute.value'].search([]):
-                line = self.line_ids.create({
-                    'color_id': color.id,
-                    'wizard_id': self.id,
-                })
-                for i, talla in enumerate(tallas[:3], start=1):
-                    line[f'talla_{i}'] = talla.name
                     
     def button_accept(self):
         # Crear las líneas de variantes según las cantidades ingresadas
