@@ -27,6 +27,7 @@ class VariantGridWizard(models.TransientModel):
     _description = 'Wizard para Cuadrícula de Variantes'
 
     attribute_serie_id = fields.Many2one('attribute.serie', string="Serie de Atributos")
+    purchase_order_line_id = fields.Many2one('purchase.order.line', string="Línea de Pedido de Compra")
     # Asumiendo que `attribute.serie` es tu modelo de serie de atributos
     # y que contiene referencias a las tallas (p.ej., mediante un campo One2many hacia `attribute.serie.item`)
     
