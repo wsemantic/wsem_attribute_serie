@@ -10,6 +10,7 @@ odoo.define('wsem_attribute_serie.CustomFieldMany2One', function(require) {
         // Sobreescribe el método que se dispara después de que un valor es seleccionado
         _setValue: function (value, options) {
             // Primero, ejecuta la lógica original para asegurarte de que el valor se establece correctamente
+			console.log("Set value llamado")
             return this._super.apply(this, arguments).then(() => {
                 // Después de establecer el valor, dispara un evento personalizado
                 // con el valor seleccionado (puede ser el ID de la serie seleccionada)
