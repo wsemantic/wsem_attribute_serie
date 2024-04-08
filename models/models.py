@@ -26,6 +26,7 @@ class VariantGridWizard(models.TransientModel):
     _name = 'variant.grid.wizard'
     _description = 'Wizard para Cuadrícula de Variantes'
 
+    _logger.info("WSEM VariantGridWizard")
     attribute_serie_id = fields.Many2one('attribute.serie', string="Serie de Atributos")
     purchase_order_line_id = fields.Many2one('purchase.order.line', string="Línea de Pedido de Compra")
     # Asumiendo que `attribute.serie` es tu modelo de serie de atributos
@@ -35,6 +36,7 @@ class VariantGridWizard(models.TransientModel):
 
     @api.onchange('attribute_serie_id')
     def _onchange_attribute_serie_id(self):
+        _logger.info("WSEM _onchange_attribute_serie_id")
         # Limpiar las líneas existentes
         self.line_ids = [(5, 0, 0)]
         # Asumiendo que tu modelo de serie de atributos tiene acceso a los colores y sus tallas
