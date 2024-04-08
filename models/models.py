@@ -77,9 +77,9 @@ class VariantGridWizardCell(models.TransientModel):
 
     wizard_id = fields.Many2one('variant.grid.wizard', string="Wizard de Variantes")
     color_id = fields.Many2one('product.attribute.value', string="Color")
-    talla_1 = fields.Char("Talla 1", force_save=True)
-    talla_2 = fields.Char("Talla 2", force_save=True)
-    talla_3 = fields.Char("Talla 3", force_save=True)
+    talla_1 = fields.Char("Talla 1")
+    talla_2 = fields.Char("Talla 2")
+    talla_3 = fields.Char("Talla 3")
     talla_1_cantidad = fields.Integer("Cantidad Talla 1")
     talla_2_cantidad = fields.Integer("Cantidad Talla 2")
     talla_3_cantidad = fields.Integer("Cantidad Talla 3")
