@@ -86,7 +86,7 @@ class VariantGridWizardCell(models.TransientModel):
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
-    def _open_variant_grid_wizard(self):
+    def open_variant_grid_wizard(self):
         wizard = self.env['variant.grid.wizard'].create({
             'purchase_order_line_id': self.id,
         })
