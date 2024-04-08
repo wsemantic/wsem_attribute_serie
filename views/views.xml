@@ -69,7 +69,7 @@
                         <field name="purchase_order_line_id" invisible="1"/>
                         <field name="attribute_serie_id"/>
                     </group>
-                    <!--<t t-call="wsem_attribute_serie.variant_grid_template"/>-->
+                    <t t-call="wsem_attribute_serie.variant_grid_template"/>
                     <footer>
                         <button name="button_accept" type="object" string="Aceptar" class="oe_highlight"/>
                         <button string="Cancelar" class="btn btn-default" special="cancel"/>
