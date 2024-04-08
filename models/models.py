@@ -86,15 +86,6 @@ class VariantGridWizardCell(models.TransientModel):
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
-    def open_variant_grid_wizard(self):
-        wizard = self.env['variant.grid.wizard'].create({
-            'purchase_order_line_id': self.id,
-        })
-        action = self.env.ref('wsem_attribute_serie.action_variant_grid_wizard').read()[0]
-        action['res_id'] = wizard.id
-        action['context'] = self.env.context
-        return action
-
     def create_variant_lines(self):
         variant_grid = self.env.context.get('variant_grid', {})
 

@@ -78,25 +78,30 @@
             </field>
         </record>
 		
-		<record id="action_variant_grid_wizard" model="ir.actions.act_window">
-			<field name="name">Abrir Cuadrícula de Variantes</field>
+		<record model="ir.actions.act_window" id="action_open_variant_grid_wizard">
+			<field name="name">Abrir Variant Grid Wizard</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">variant.grid.wizard</field>
 			<field name="view_mode">form</field>
 			<field name="target">new</field>
+			<field name="context">{'default_purchase_order_line_id': active_id}</field>
 		</record>
-
-		<record id="purchase_order_form_inherit_lines_button" model="ir.ui.view">
+		
+		<!-- Extender la vista de formulario de la orden de compra para añadir un botón a la vista de lista embebida de líneas de pedido -->
+        <record id="purchase_order_form_inherit_lines_button" model="ir.ui.view">
             <field name="name">purchase.order.form.inherit.lines.button</field>
             <field name="model">purchase.order</field>
             <field name="inherit_id" ref="purchase.purchase_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='order_line']/tree" position="inside">
-                    <!-- Añadir botón en la vista de lista de las líneas de pedido. -->
-                    <button name="open_variant_grid_wizard" type="object" string="Abrir Wizard"/>
+                    <!-- Añadir botón en la vista de lista de las líneas de pedido. Asegúrate de reemplazar 'action_open_variant_grid_wizard' con el ID de tu acción -->
+                    <button name="%(action_open_variant_grid_wizard)d" 
+                            type="action" 
+                            string="Abrir Wizard"/>
                 </xpath>
             </field>
         </record>
+
 		
 	</data>
 </odoo>
