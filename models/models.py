@@ -49,9 +49,9 @@ class VariantGridWizard(models.TransientModel):
             # Para cada color, crear una línea con las cantidades inicializadas a nulo (o cero)
             line_vals.append((0, 0, {
                 'color_id': color_value.id,
-                'talla_1_cantidad': 0,  # o `False` si prefieres inicializar como nulo
-                'talla_2_cantidad': 0,  # o `False`
-                'talla_3_cantidad': 0,  # o `False`
+                'talla_1': 0,  # o `False` si prefieres inicializar como nulo
+                'talla_2': 0,  # o `False`
+                'talla_3': 0,  # o `False`
             }))
         
         res['line_ids'] = line_vals
@@ -68,9 +68,9 @@ class VariantGridWizard(models.TransientModel):
             self.talla_2_nombre = ""
             self.talla_3_nombre = ""
             for line in self.line_ids:
-                line.talla_1_cantidad = False  # Asumiendo que quieras limpiar las cantidades también
-                line.talla_2_cantidad = False
-                line.talla_3_cantidad = False
+                line.talla_1 = False  # Asumiendo que quieras limpiar las cantidades también
+                line.talla_2 = False
+                line.talla_3 = False
             return
 
         # Obtener los nombres de las tallas de la serie seleccionada
