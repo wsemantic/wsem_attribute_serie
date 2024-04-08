@@ -82,9 +82,6 @@ class VariantGridWizardLine(models.TransientModel):
     talla_1 = fields.Char("Talla 1")
     talla_2 = fields.Char("Talla 2")
     talla_3 = fields.Char("Talla 3")
-    cantidad_talla_1 = fields.Integer("Cantidad Talla 1")
-    cantidad_talla_2 = fields.Integer("Cantidad Talla 2")
-    cantidad_talla_3 = fields.Integer("Cantidad Talla 3")
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
