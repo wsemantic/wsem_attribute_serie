@@ -39,25 +39,20 @@ class VariantGridWizard(models.TransientModel):
         _logger.info("WSEM _onchange_attribute_serie_id")
         # Limpiar las líneas existentes
         self.line_ids = [(5, 0, 0)]
-        _logger.info("WSEM iniciliazdo line_ids")
-        # Asumiendo que tu modelo de serie de atributos tiene acceso a los colores y sus tallas
+
         if self.attribute_serie_id:
-            _logger.info("WSEM existe attribute_serie_id")
-            # Aquí deberías implementar la lógica para poblar `line_ids` basado en la serie seleccionada
-            # Esto es un ejemplo simplificado
-            for color in self.env['product.attribute.value'].search([]): # Esto es solo un placeholder, ajusta según tu modelo de datos
-                _logger.info("WSEM itera color")
-                self.line_ids.create({
+            # Obtener las tallas de la serie
+            tallas = self.attribute_serie_id.item_ids.mapped('attribute_value_id')
+
+            # Actualizar las tallas en las líneas del wizard
+            for color in self.env['product.attribute.value'].search([]):
+                line = self.line_ids.create({
                     'color_id': color.id,
                     'wizard_id': self.id,
-                    'talla_1': 'Talla 1', # Estos valores deben ser dinámicos basados en la serie
-                    'talla_2': 'Talla 2',
-                    'talla_3': 'Talla 3',
-                    # Asumiendo que deseas inicializar las cantidades en cero o algún valor predeterminado
-                    'cantidad_talla_1': 0,
-                    'cantidad_talla_2': 0,
-                    'cantidad_talla_3': 0,
                 })
+                for i, talla in enumerate(tallas[:3], start=1):
+                    line[f'talla_{i}'] = talla.name
+                    
     def button_accept(self):
         # Crear las líneas de variantes según las cantidades ingresadas
         if self.purchase_order_line_id:

@@ -1,6 +1,6 @@
 <odoo>
     <data>
-<!-- views/variant_grid_template.xml -->
+<!-- views/variant_grid_template.xml -
 
 		<template id="variant_grid_template" t-name="wsem_attribute_serie.variant_grid_template">
 			<div class="o_form_sheet">
@@ -31,7 +31,7 @@
 					</tbody>
 				</table>
 			</div>
-		</template>
+		</template>-->
 
 
     </data>
