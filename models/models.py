@@ -46,7 +46,7 @@ class VariantGridWizard(models.TransientModel):
         return res
 
 
-    @api.onchange('attribute_serie_id')
+    #@api.onchange('attribute_serie_id')
     def _onchange_attribute_serie_id(self):
         if self.attribute_serie_id:
             # Obtener los nombres de las tallas de la serie seleccionada
