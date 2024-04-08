@@ -99,7 +99,7 @@ class VariantGridWizardLine(models.TransientModel):
     color_id = fields.Many2one(
         'product.attribute.value',
         string='Color',
-        domain="[('attribute_id.id', '=', '2')]"
+        domain="[('attribute_id.id', '=', '262')]"
     )
     
     talla_1 = fields.Char("Talla 1")
