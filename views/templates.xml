@@ -2,7 +2,7 @@
     <data>
 <!-- views/variant_grid_template.xml -->
 
-		<template id="variant_grid_template">
+		<template id="wsem_attribute_serie.variant_grid_template">
 			<t t-name="wsem_attibute_serie.variant_grid_template">
 				<table class="table">
 					<thead>
