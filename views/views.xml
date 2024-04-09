@@ -64,7 +64,7 @@
 			<field name="name">variant.grid.wizard.view.form</field>
 			<field name="model">variant.grid.wizard</field>
 			<field name="arch" type="xml">
-				<form>
+				<form js_class="variant_grid_wizard_form">
 					<sheet>
 						<group>
 							<field name="purchase_order_line_id" invisible="1"/>
@@ -100,14 +100,16 @@
 							"use strict";
 
 							var FormController = require('web.FormController');
+							var FormView = require('web.FormView');
+							var viewRegistry = require('web.view_registry');
 
 							var VariantGridFormController = FormController.extend({
-								events: _.extend({}, FormController.prototype.events, {
-									'field_changed': '_onFieldChanged',
+								custom_events: _.extend({}, FormController.prototype.custom_events, {
+									field_changed: '_onFieldChanged',
 								}),
 
 								_onFieldChanged: function (event) {
-									var fieldName = event.data.changes.field;
+									var fieldName = event.data.changes && event.data.changes.field;
 									if (fieldName === 'attribute_serie_id') {
 										this._updateTableHeader();
 									}
@@ -115,7 +117,7 @@
 								},
 
 								_updateTableHeader: function () {
-									var attributeSerie = this.initialState.data.attribute_serie_id;
+									var attributeSerie = this.model.get(this.handle).data.attribute_serie_id;
 									console.log("Selected attribute_serie_id:", attributeSerie);
 
 									if (attributeSerie) {
@@ -132,7 +134,13 @@
 								},
 							});
 
-							FormController.include(VariantGridFormController);
+							var VariantGridFormView = FormView.extend({
+								config: _.extend({}, FormView.prototype.config, {
+									Controller: VariantGridFormController,
+								}),
+							});
+
+							viewRegistry.add('variant_grid_wizard_form', VariantGridFormView);
 						});
 					</script>
 				</xpath>
