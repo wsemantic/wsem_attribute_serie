@@ -12,8 +12,7 @@ odoo.define('variant_grid_wizard.form', function (require) {
 
         _onFieldChanged: function (event) {
             var changes = event.data.changes || {};
-            var fieldName = changes.field;
-            if (fieldName === 'attribute_serie_id') {
+            if ('attribute_serie_id' in changes) {
                 this._updateTableHeader();
             }
             this._super.apply(this, arguments);
