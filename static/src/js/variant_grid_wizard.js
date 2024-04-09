@@ -12,7 +12,12 @@ odoo.define('variant_grid_wizard.form', function (require) {
         }),
 
         _onFieldChanged: function (event) {
-            // Tu lógica existente
+            var changes = event.data.changes || {};
+            if ('attribute_serie_id' in changes) {
+                // No es necesario llamar a reload aquí si la actualización de los encabezados
+                // se maneja a través de _updateTableHeader, que ya maneja la carga.
+                this._updateTableHeader();
+            }
             this._super.apply(this, arguments);
         },
 
