@@ -20,9 +20,10 @@ odoo.define('variant_grid_wizard.form', function (require) {
 
 		_updateTableHeader: function() {
 			var self = this;
-			this.model.reload(this.handle).then(function() {
+			//this.model.reload(this.handle).then(function() {
 				var record = self.model.get(self.handle, {raw: true});
 				// Parsea el valor de nombres_tallas desde la cadena JSON a un array de JavaScript
+				
 				var nombresTallas = JSON.parse(record.data.nombres_tallas || "[]");
 				
 				console.log("Nombres de Tallas:", nombresTallas);
@@ -32,7 +33,7 @@ odoo.define('variant_grid_wizard.form', function (require) {
 					// Se actualiza el texto de cada cabecera de columna con los nombres de las tallas
 					$(this).text(nombresTallas[index] || '');
 				});
-			});
+			//});
 		},
 
     });
