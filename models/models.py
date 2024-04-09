@@ -52,9 +52,14 @@ class VariantGridWizard(models.TransientModel):
             nombres_tallas = [talla.name for talla in tallas][:3]
 
             # Asegurarse de que hay al menos 3 nombres (rellenar con vacío si es necesario)
-            nombres_tallas += [""] * (3 - len(nombres_tallas))
-            self.nombres_tallas = nombres_tallas
-            _logger.info(f"WSEM talla 1 {nombres_tallas[0]}")
+
+            # Convertir la lista de nombres a un string JSON válido
+            nombres_tallas_json = json.dumps(nombres_tallas)
+            _logger.info(f"WSEM talla 1 {nombres_tallas_json}")
+
+            # Actualizar el campo con el string JSON
+            self.nombres_tallas = nombres_tallas_json
+
             # Actualizar la fila de encabezado (asumiendo que siempre es la primera línea)
             if self.line_ids:
                 self.line_ids[0].talla_1 = nombres_tallas[0]
@@ -62,10 +67,7 @@ class VariantGridWizard(models.TransientModel):
                 self.line_ids[0].talla_3 = nombres_tallas[2]
         else:
             # Si no hay serie seleccionada, reiniciar a los valores predeterminados
-            if self.line_ids:
-                self.line_ids[0].talla_1 = 'Talla 1'
-                self.line_ids[0].talla_2 = 'Talla 2'
-                self.line_ids[0].talla_3 = 'Talla 3'
+            self.nombres_tallas = '["Talla 1", "Talla 2", "Talla 3"]
 
 
 
