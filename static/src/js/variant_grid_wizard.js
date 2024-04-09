@@ -40,12 +40,6 @@ odoo.define('variant_grid_wizard.form', function (require) {
 		});
 
 
-        // Un ejemplo de cómo podrías manejar el evento de añadir una nueva línea.
-        // Esto dependerá de cómo estés añadiendo nuevas líneas en tu interfaz
-        _onAddLine: function() {
-            // Posiblemente necesites una lógica aquí para manejar específicamente la adición de nuevas líneas
-            this.reload(); // Esto recargará y luego actualizará los encabezados
-        },
 
     });
 
