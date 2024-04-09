@@ -105,9 +105,9 @@ class VariantGridWizardLine(models.TransientModel):
         domain="[('attribute_id.name', '=', 'Color')]"
     )
     
-    talla_1 = fields.Char("Talla 1")
-    talla_2 = fields.Char("Talla 2")
-    talla_3 = fields.Char("Talla 3")
+    talla_1 = fields.Char("CTalla 1")
+    talla_2 = fields.Char("CTalla 2")
+    talla_3 = fields.Char("CTalla 3")
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
