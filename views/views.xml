@@ -68,7 +68,7 @@
 					<sheet>
 						<group>
 							<field name="purchase_order_line_id" invisible="1"/>
-							<field name="attribute_serie_id" widget="many2one"/>
+							<field name="attribute_serie_id" widget="custom_field_many2one_attribute_serie"/>
 						</group>
 						<field name="line_ids" widget="one2many" colspan="4" nolabel="1">
 							<tree editable="bottom">
@@ -92,44 +92,6 @@
 						<button string="Cancelar" class="btn btn-default" special="cancel"/>
 					</footer>
 				</form>
-				<xpath expr="." position="inside">
-					<script>
-						console.log("variant_grid_wizard_view_form loaded");
-
-						$(document).ready(function() {
-							console.log("Document ready");
-
-							var $attributeSerieField = $('div[name="attribute_serie_id"]');
-							var $tableHeader = $('table.o_list_view thead tr');
-
-							function updateTableHeader() {
-								console.log("updateTableHeader called");
-
-								var attributeSerieName = $attributeSerieField.find('input').val();
-								console.log("Selected attribute_serie_id v3:", attributeSerieName);
-
-								if (attributeSerieName) {
-									var attributeSerie = $attributeSerieField.data('record');
-									var tallaNames = attributeSerie.data.item_ids.data.map(function(item) {
-										return item.data.attribute_value_id.data.display_name;
-									});
-									console.log("Talla names:", tallaNames);
-
-									$tableHeader.find('th').slice(1).each(function(index) {
-										$(this).text(tallaNames[index] || '');
-									});
-								}
-							}
-
-							$attributeSerieField.on('change', 'input', function() {
-								console.log("attribute_serie_id changed");
-								updateTableHeader();
-							});
-
-							updateTableHeader();
-						});
-					</script>
-				</xpath>
 			</field>
 		</record>
 		
