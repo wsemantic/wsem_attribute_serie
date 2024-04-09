@@ -106,7 +106,7 @@
 								console.log("updateTableHeader called");
 
 								var attributeSerieName = $attributeSerieField.attr('value');
-								console.log("Selected attribute_serie_id:", attributeSerieName);
+								console.log("Selected attribute_serie_id v2:", attributeSerieName);
 
 								if (attributeSerieName) {
 									var attributeSerie = $attributeSerieField.data('record');
