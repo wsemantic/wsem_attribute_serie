@@ -22,22 +22,23 @@ odoo.define('variant_grid_wizard.form', function (require) {
         },
 
         // Asegúrate de llamar a _updateTableHeader después de cualquier acción que requiera una actualización
-		this.model.reload(this.handle).then(function() {
-            var self = this;
-            // Obtiene el registro actual para acceder a los datos del modelo
-            var record = self.model.get(self.handle, {raw: true});
-            // Parsea los nombres de tallas desde el campo nombres_tallas
-            var nombresTallas = JSON.parse(record.data.nombres_tallas || "[]");
-
-            console.log("Nombres de Tallas:", nombresTallas);
-
-            // Actualiza los textos de los encabezados en el DOM
-            $('table.o_list_table thead tr th[data-name^="talla_"]').each(function(index) {
-                if (index < nombresTallas.length) {
-                    $(this).text(nombresTallas[index] || '');
-                }
-            });
-		}),
+		_updateTableHeader: function() {
+			var self = this;
+			this.model.reload(this.handle).then(function() {
+				var record = self.model.get(self.handle, {raw: true});
+				// Parsea el valor de nombres_tallas desde la cadena JSON a un array de JavaScript
+				
+				var nombresTallas = JSON.parse(record.data.nombres_tallas || "[]");
+				
+				console.log("Nombres de Tallas:", nombresTallas);
+											
+				
+				$('table.o_list_table thead tr th[data-name^="talla_"]').each(function(index) {
+					// Se actualiza el texto de cada cabecera de columna con los nombres de las tallas
+					$(this).text(nombresTallas[index] || '');
+				});
+			});
+		},
 
 
 
