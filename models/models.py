@@ -34,9 +34,7 @@ class VariantGridWizard(models.TransientModel):
     
     line_ids = fields.One2many('variant.grid.wizard.line', 'wizard_id', string="Líneas")
     
-    talla_1_nombre = fields.Char("Talla 1 Nombre", default="T1")
-    talla_2_nombre = fields.Char("Talla 2 Nombre", default="T2")
-    talla_3_nombre = fields.Char("Talla 3 Nombre", default="T3")
+    nombres_tallas = fields.Text(string='Nombres de Tallas', default='["T1", "T2", "T3"]')
     
     @api.model
     def default_get(self, fields_list):
