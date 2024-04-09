@@ -28,7 +28,7 @@ odoo.define('variant_grid_wizard.form', function (require) {
 				console.log("Nombres de Tallas:", nombresTallas);
 				
 				// Asegurarse de que el selector apunta correctamente a los elementos de cabecera de tu tabla
-				var $tableHeaderThs = $('table.o_list_view thead th');
+				var $tableHeaderThs = $('table.o_list_table thead th');
 				console.log("$tableHeaderThs length:", $tableHeaderThs.length); // Verifica que estamos seleccionando elementos
 				
 				$tableHeaderThs.each(function(index, th) {
