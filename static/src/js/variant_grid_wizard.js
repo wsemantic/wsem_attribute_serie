@@ -20,27 +20,25 @@ odoo.define('variant_grid_wizard.form', function (require) {
 
 		_updateTableHeader: function() {
 			var self = this;
-			// Se fuerza la recarga del registro actual para asegurarse de que los datos estén actualizados
 			this.model.reload(this.handle).then(function() {
 				var record = self.model.get(self.handle, {raw: true});
-				// Suponiendo que nombres_tallas ya está almacenado como un string JSON válido
-				var nombresTallas;
-				try {
-					nombresTallas = JSON.parse(record.data.nombres_tallas || "[]");
-				} catch(e) {
-					console.error("Error parsing nombres_tallas:", e);
-					nombresTallas = []; // Fallback a un array vacío en caso de error
-				}
+				// Parsea el valor de nombres_tallas desde la cadena JSON a un array de JavaScript
+				var nombresTallas = JSON.parse(record.data.nombres_tallas || "[]");
 				
 				console.log("Nombres de Tallas:", nombresTallas);
 				
-				// Actualiza las cabeceras de las columnas con los nombres de las tallas
-				$('table.o_list_view thead tr th[data-name^="talla_"]').each(function(index) {
-					// Se actualiza el texto de cada cabecera de columna con los nombres de las tallas
-					$(this).text(nombresTallas[index] || '');
+				// Asegurarse de que el selector apunta correctamente a los elementos de cabecera de tu tabla
+				var $tableHeaderThs = $('table.o_list_view thead th');
+				console.log("$tableHeaderThs length:", $tableHeaderThs.length); // Verifica que estamos seleccionando elementos
+				
+				$tableHeaderThs.each(function(index, th) {
+					if (index < nombresTallas.length) { // Asegura no salir del rango de nombresTallas
+						$(th).text(nombresTallas[index]);
+					}
 				});
 			});
 		},
+
     });
 
     var VariantGridFormView = FormView.extend({
