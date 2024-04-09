@@ -63,9 +63,9 @@ class VariantGridWizard(models.TransientModel):
 
             # Actualizar la fila de encabezado (asumiendo que siempre es la primera línea)
             
-            # Suponiendo que nombres_tallas es tu lista de nombres de tallas
-            for i, nombre_talla in enumerate(nombres_tallas[:3], start=1):
-                setattr(self.line_ids[0], f'talla_{i}', nombre_talla)
+            #Esto era si la primera fila era el encabezado
+            #for i, nombre_talla in enumerate(nombres_tallas[:3], start=1):
+            #    setattr(self.line_ids[0], f'talla_{i}', nombre_talla)
 
         else:
             # Si no hay serie seleccionada, reiniciar a los valores predeterminados
