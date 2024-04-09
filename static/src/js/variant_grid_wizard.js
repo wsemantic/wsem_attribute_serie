@@ -37,7 +37,7 @@ odoo.define('variant_grid_wizard.form', function (require) {
                     $(this).text(nombresTallas[index] || '');
                 }
             });
-		});
+		}),
 
 
 
