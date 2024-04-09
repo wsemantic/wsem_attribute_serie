@@ -73,9 +73,9 @@
 						<field name="line_ids" widget="one2many" colspan="4" nolabel="1">
 							<tree editable="bottom">
 								<field name="color_id"/>
-								<field name="talla_1" attrs="{'column_invisible': [('talla_1', '=', False)]}"/>
-								<field name="talla_2" attrs="{'column_invisible': [('talla_2', '=', False)]}"/>
-								<field name="talla_3" attrs="{'column_invisible': [('talla_3', '=', False)]}"/>
+								<field name="talla_1"/>
+								<field name="talla_2"/>
+								<field name="talla_3"/>
 							</tree>
 							<form>
 								<group>
@@ -92,7 +92,6 @@
 						<button string="Cancelar" class="btn btn-default" special="cancel"/>
 					</footer>
 				</form>
-				
 			</field>
 		</record>
 		
