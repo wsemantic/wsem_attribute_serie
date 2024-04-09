@@ -68,7 +68,7 @@
 					<sheet>
 						<group>
 							<field name="purchase_order_line_id" invisible="1"/>
-							<field name="attribute_serie_id" widget="custom_field_many2one_attribute_serie"/>
+							<field name="attribute_serie_id" widget="many2one"/>
 						</group>
 						<field name="line_ids" widget="one2many" colspan="4" nolabel="1">
 							<tree editable="bottom">
@@ -92,6 +92,50 @@
 						<button string="Cancelar" class="btn btn-default" special="cancel"/>
 					</footer>
 				</form>
+				<xpath expr="." position="inside">
+					<script>
+						console.log("variant_grid_wizard_view_form loaded");
+
+						odoo.define('variant_grid_wizard.form', function (require) {
+							"use strict";
+
+							var FormController = require('web.FormController');
+
+							var VariantGridFormController = FormController.extend({
+								events: _.extend({}, FormController.prototype.events, {
+									'field_changed': '_onFieldChanged',
+								}),
+
+								_onFieldChanged: function (event) {
+									var fieldName = event.data.changes.field;
+									if (fieldName === 'attribute_serie_id') {
+										this._updateTableHeader();
+									}
+									this._super.apply(this, arguments);
+								},
+
+								_updateTableHeader: function () {
+									var attributeSerie = this.initialState.data.attribute_serie_id;
+									console.log("Selected attribute_serie_id:", attributeSerie);
+
+									if (attributeSerie) {
+										var tallaNames = attributeSerie.data.item_ids.data.map(function(item) {
+											return item.data.attribute_value_id.data.display_name;
+										});
+										console.log("Talla names:", tallaNames);
+
+										var $tableHeader = $('table.o_list_view thead tr');
+										$tableHeader.find('th').slice(1).each(function(index) {
+											$(this).text(tallaNames[index] || '');
+										});
+									}
+								},
+							});
+
+							FormController.include(VariantGridFormController);
+						});
+					</script>
+				</xpath>
 			</field>
 		</record>
 		
