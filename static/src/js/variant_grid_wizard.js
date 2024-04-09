@@ -8,21 +8,15 @@ odoo.define('variant_grid_wizard.form', function (require) {
     var VariantGridFormController = FormController.extend({
         custom_events: _.extend({}, FormController.prototype.custom_events, {
             field_changed: '_onFieldChanged',
+            // Considera añadir otros eventos si son necesarios para tu lógica
         }),
 
-        // Este método maneja el evento field_changed
         _onFieldChanged: function (event) {
-            var changes = event.data.changes || {};
-            // Verifica si el cambio ocurrió en attribute_serie_id
-            if ('attribute_serie_id' in changes) {
-                // Llama a _updateTableHeader para actualizar los encabezados
-                this._updateTableHeader();
-            }
-            // Asegúrate de llamar al método super para no interrumpir la cadena de eventos
+            // Tu lógica existente
             this._super.apply(this, arguments);
         },
 
-        // Actualiza los encabezados de las columnas basándose en los valores de nombres_tallas
+        // Asegúrate de llamar a _updateTableHeader después de cualquier acción que requiera una actualización
         _updateTableHeader: function() {
             var self = this;
             // Obtiene el registro actual para acceder a los datos del modelo
@@ -39,15 +33,29 @@ odoo.define('variant_grid_wizard.form', function (require) {
                 }
             });
         },
+
+        // Reincorporando reload con un control más refinado
+        reload: function() {
+            var self = this;
+            return this._super.apply(this, arguments).then(function() {
+                self._updateTableHeader(); // Llama a actualizar los encabezados después de recargar
+            });
+        },
+
+        // Un ejemplo de cómo podrías manejar el evento de añadir una nueva línea.
+        // Esto dependerá de cómo estés añadiendo nuevas líneas en tu interfaz
+        _onAddLine: function() {
+            // Posiblemente necesites una lógica aquí para manejar específicamente la adición de nuevas líneas
+            this.reload(); // Esto recargará y luego actualizará los encabezados
+        },
+
     });
 
-    // Extendemos FormView para utilizar nuestro FormController personalizado
     var VariantGridFormView = FormView.extend({
         config: _.extend({}, FormView.prototype.config, {
             Controller: VariantGridFormController,
         }),
     });
 
-    // Registramos nuestra vista personalizada para que esté disponible en Odoo
     viewRegistry.add('variant_grid_wizard_form', VariantGridFormView);
 });
