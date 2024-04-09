@@ -109,7 +109,8 @@
 								}),
 
 								_onFieldChanged: function (event) {
-									var fieldName = event.data.changes && event.data.changes.field;
+									var changes = event.data.changes || {};
+									var fieldName = changes.field;
 									if (fieldName === 'attribute_serie_id') {
 										this._updateTableHeader();
 									}
