@@ -99,14 +99,14 @@
 						$(document).ready(function() {
 							console.log("Document ready");
 
-							var $attributeSerieField = $('input[name="attribute_serie_id"]');
+							var $attributeSerieField = $('div[name="attribute_serie_id"]');
 							var $tableHeader = $('table.o_list_view thead tr');
 
 							function updateTableHeader() {
 								console.log("updateTableHeader called");
 
-								var attributeSerieName = $attributeSerieField.attr('value');
-								console.log("Selected attribute_serie_id v2:", attributeSerieName);
+								var attributeSerieName = $attributeSerieField.find('input').val();
+								console.log("Selected attribute_serie_id v3:", attributeSerieName);
 
 								if (attributeSerieName) {
 									var attributeSerie = $attributeSerieField.data('record');
@@ -121,7 +121,7 @@
 								}
 							}
 
-							$attributeSerieField.change(function() {
+							$attributeSerieField.on('change', 'input', function() {
 								console.log("attribute_serie_id changed");
 								updateTableHeader();
 							});
