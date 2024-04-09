@@ -53,6 +53,7 @@ class VariantGridWizard(models.TransientModel):
 
             # Asegurarse de que hay al menos 3 nombres (rellenar con vacío si es necesario)
             nombres_tallas += [""] * (3 - len(nombres_tallas))
+            self.nombres_tallas = nombres_tallas
             _logger.info(f"WSEM talla 1 {nombres_tallas[0]}")
             # Actualizar la fila de encabezado (asumiendo que siempre es la primera línea)
             if self.line_ids:
