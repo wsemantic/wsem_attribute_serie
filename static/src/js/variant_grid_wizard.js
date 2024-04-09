@@ -1,40 +1,47 @@
-odoo.define('wsem_attribute_serie.CustomFieldMany2One', function(require) {
-    'use strict';
-
-    var FieldMany2One = require('web.relational_fields').FieldMany2One;
-    var fieldRegistry = require('web.field_registry');
-
-    var CustomFieldMany2One = FieldMany2One.extend({
-        // Intenta usar _onChange si _setValue no está siendo llamado
-        _onChange: function() {
-            // Asegúrate de llamar a la implementación original para no perder funcionalidad
-            this._super.apply(this, arguments);
-            console.log("El campo attribute_serie_id ha cambiado.");
-            // Aquí tu lógica adicional...
-        },
-    });
-
-    fieldRegistry.add('custom_field_many2one_attribute_serie', CustomFieldMany2One);
-});
-
-
-odoo.define('wsem_attribute_serie.CustomFormController', function (require) {
-    'use strict';
+odoo.define('variant_grid_wizard.form', function (require) {
+    "use strict";
 
     var FormController = require('web.FormController');
+    var FormView = require('web.FormView');
+    var viewRegistry = require('web.view_registry');
 
-    FormController.include({
-        custom_events: $.extend({}, FormController.prototype.custom_events, {
-            attribute_serie_changed: '_onAttributeSerieChanged',
+    var VariantGridFormController = FormController.extend({
+        custom_events: _.extend({}, FormController.prototype.custom_events, {
+            field_changed: '_onFieldChanged',
         }),
-        _onAttributeSerieChanged: function (e) {
-            // Aquí puedes implementar la lógica para actualizar las cabeceras
-            // basado en el ID de la serie que se pasó con el evento
-            // Podrías necesitar buscar en tu modelo de datos en el cliente para encontrar los nombres correspondientes
 
-            // Esto es un placeholder, necesitarías implementar la lógica específica aquí
-            console.log("Serie cambiada a ID:", e.data.serieId);
-            // Actualizar las cabeceras según sea necesario
+        _onFieldChanged: function (event) {
+            var changes = event.data.changes || {};
+            var fieldName = changes.field;
+            if (fieldName === 'attribute_serie_id') {
+                this._updateTableHeader();
+            }
+            this._super.apply(this, arguments);
+        },
+
+        _updateTableHeader: function () {
+            var attributeSerie = this.model.get(this.handle).data.attribute_serie_id;
+            console.log("Selected attribute_serie_id:", attributeSerie);
+
+            if (attributeSerie) {
+                var tallaNames = attributeSerie.data.item_ids.data.map(function(item) {
+                    return item.data.attribute_value_id.data.display_name;
+                });
+                console.log("Talla names:", tallaNames);
+
+                var $tableHeader = $('table.o_list_view thead tr');
+                $tableHeader.find('th').slice(1).each(function(index) {
+                    $(this).text(tallaNames[index] || '');
+                });
+            }
         },
     });
+
+    var VariantGridFormView = FormView.extend({
+        config: _.extend({}, FormView.prototype.config, {
+            Controller: VariantGridFormController,
+        }),
+    });
+
+    viewRegistry.add('variant_grid_wizard_form', VariantGridFormView);
 });
