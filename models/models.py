@@ -67,7 +67,7 @@ class VariantGridWizard(models.TransientModel):
                 self.line_ids[0].talla_3 = nombres_tallas[2]
         else:
             # Si no hay serie seleccionada, reiniciar a los valores predeterminados
-            self.nombres_tallas = '["Talla 1", "Talla 2", "Talla 3"]
+            self.nombres_tallas = '["Talla 1", "Talla 2", "Talla 3"]'
 
 
 
