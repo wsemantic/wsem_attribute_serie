@@ -37,12 +37,12 @@ class VariantGridWizard(models.TransientModel):
     
     nombres_tallas = fields.Text(string='Nombres de Tallas', default='["T1", "T2", "T3"]')
     
-    @api.model
-    def default_get(self, fields_list):
-        res = super(VariantGridWizard, self).default_get(fields_list)
-        # Inicializar la "fila de encabezado" con valores predeterminados para las tallas
-        res['line_ids'] = [(0, 0, {'color_id': False, 'talla_1': 'Talla 1', 'talla_2': 'Talla 2', 'talla_3': 'Talla 3'})]
-        return res
+    #@api.model
+    #def default_get(self, fields_list):
+    #    res = super(VariantGridWizard, self).default_get(fields_list)
+    #    # Inicializar la "fila de encabezado" con valores predeterminados para las tallas
+    #    res['line_ids'] = [(0, 0, {'color_id': False, 'talla_1': 'Talla 1', 'talla_2': 'Talla 2', 'talla_3': 'Talla 3'})]
+    #    return res
 
 
     @api.onchange('attribute_serie_id')
