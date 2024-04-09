@@ -20,27 +20,25 @@ odoo.define('variant_grid_wizard.form', function (require) {
 
 		_updateTableHeader: function() {
 			var self = this;
-			// Obtiene el registro actual del modelo en el frontend
-			var record = this.model.get(this.handle, {raw: true});
-			
-			// Parsea el valor de nombres_tallas desde la cadena JSON a un array de JavaScript
-			// Nota: Asume que record.data.nombres_tallas ya está en formato JSON válido como cadena
-			var nombresTallas;
-			try {
-				nombresTallas = JSON.parse(record.data.nombres_tallas);
-			} catch(e) {
-				console.error("Error parsing nombres_tallas:", e);
-				nombresTallas = []; // Fallback a un array vacío en caso de error
-			}
-			
-			console.log("Nombres de Tallas:", nombresTallas);
-			
-			// Actualiza las cabeceras de las columnas con los nombres de las tallas
-			// Asegúrate de que el selector utilizado aquí coincida con la estructura de tu tabla HTML
-			$('table.o_list_view thead th[data-name^="talla_"]').each(function(index) {
-				// Se actualiza el texto de cada cabecera de columna con los nombres de las tallas,
-				// o se deja en blanco si no hay nombre disponible para ese índice
-				$(this).text(nombresTallas[index] || '');
+			// Se fuerza la recarga del registro actual para asegurarse de que los datos estén actualizados
+			this.model.reload(this.handle).then(function() {
+				var record = self.model.get(self.handle, {raw: true});
+				// Suponiendo que nombres_tallas ya está almacenado como un string JSON válido
+				var nombresTallas;
+				try {
+					nombresTallas = JSON.parse(record.data.nombres_tallas || "[]");
+				} catch(e) {
+					console.error("Error parsing nombres_tallas:", e);
+					nombresTallas = []; // Fallback a un array vacío en caso de error
+				}
+				
+				console.log("Nombres de Tallas:", nombresTallas);
+				
+				// Actualiza las cabeceras de las columnas con los nombres de las tallas
+				$('table.o_list_view thead tr th[data-name^="talla_"]').each(function(index) {
+					// Se actualiza el texto de cada cabecera de columna con los nombres de las tallas
+					$(this).text(nombresTallas[index] || '');
+				});
 			});
 		},
     });
