@@ -26,15 +26,11 @@ odoo.define('variant_grid_wizard.form', function (require) {
 				var nombresTallas = JSON.parse(record.data.nombres_tallas || "[]");
 				
 				console.log("Nombres de Tallas:", nombresTallas);
+											
 				
-				// Asegurarse de que el selector apunta correctamente a los elementos de cabecera de tu tabla
-				var $tableHeaderThs = $('table.o_list_table thead th');
-				console.log("$tableHeaderThs length:", $tableHeaderThs.length); // Verifica que estamos seleccionando elementos
-				
-				$tableHeaderThs.each(function(index, th) {
-					if (index < nombresTallas.length) { // Asegura no salir del rango de nombresTallas
-						$(th).text(nombresTallas[index]);
-					}
+				$('table.o_list_table thead tr th[data-name^="talla_"]').each(function(index) {
+					// Se actualiza el texto de cada cabecera de columna con los nombres de las tallas
+					$(this).text(nombresTallas[index] || '');
 				});
 			});
 		},
