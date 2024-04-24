@@ -80,22 +80,22 @@ class VariantGridWizard(models.TransientModel):
         if self.purchase_order_line_id:
             _logger.info(f"WSEM existe linea de compra {self.purchase_order_line_id.id}")
             variant_grid = {
-                'tallas': [detail.talla_1 for detail in self.detail_ids if detail.talla_1],
-                'colores': [detail.color_id.name for detail in self.detail_ids if detail.color_id],
+                'tallas': json.loads(self.nombres_tallas),  # Convertir de JSON a lista
+                'colores': [line.color_id.name for line in self.line_ids if line.color_id],
             }
-            for detail in self.detail_ids:
-                if detail.color_id:
-                    for talla in variant_grid['tallas']:
+            for line in self.line_ids:
+                if line.color_id:
+                    for i, talla in enumerate(variant_grid['tallas'], start=1):
                         _logger.info(f"WSEM itera talla {talla}")
-                        cantidad = getattr(detail, f'{talla}', 0)
-                        if cantidad > 0:
-                            variant_grid[f'{talla}_{detail.color_id.name}'] = cantidad
+                        cantidad = getattr(line, f'talla_{i}', 0)
+                        if cantidad:
+                            variant_grid[f'{talla}_{line.color_id.name}'] = int(cantidad)
 
             # Llamar al método create_variant_lines en la línea de pedido de compra
             self.purchase_order_line_id.with_context(variant_grid=variant_grid).create_variant_lines()
 
         # Devolver la acción de cierre de la ventana emergente
-            return {'type': 'ir.actions.act_window_close'}
+        return {'type': 'ir.actions.act_window_close'}
 
 class VariantGridWizardLine(models.TransientModel):
     _name = 'variant.grid.wizard.line'
