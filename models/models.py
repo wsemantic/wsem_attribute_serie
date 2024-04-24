@@ -57,13 +57,11 @@ class VariantGridWizard(models.TransientModel):
         if serie_id:
             serie = self.env['attribute.serie'].browse(serie_id)
             tallas = serie.item_ids.mapped('attribute_value_id')
-            nombres_tallas = [talla.name for talla in tallas]
-    
-        # Convertir la lista de nombres a un string JSON válido
-        nombres_tallas_json = json.dumps(nombres_tallas)
-
-        # Actualizar el campo con el string JSON
-        self.nombres_tallas = nombres_tallas_json
+            nombres_tallas = [talla.name for talla in tallas]    
+            # Convertir la lista de nombres a un string JSON válido
+            nombres_tallas_json = json.dumps(nombres_tallas)
+            # Actualizar el campo con el string JSON
+            self.nombres_tallas = nombres_tallas_json
 
                     
     def button_accept(self):
