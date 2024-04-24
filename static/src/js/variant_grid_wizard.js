@@ -26,28 +26,23 @@ odoo.define('variant_grid_wizard.form', function (require) {
 			var self = this;
 			this.model.reload(this.handle).then(function() {
 				var record = self.model.get(self.handle, {raw: true});
-				// Parsea el valor de nombres_tallas desde la cadena JSON a un array de JavaScript
-				
-				var nombresTallas = JSON.parse(record.data.nombres_tallas || "[]");				
-				console.log("Nombres de Tallas:", nombresTallas);											
-				
-				//$('table.o_list_table thead tr th[data-name^="talla_"]').each(function(index) {					
-				//	$(this).text(nombresTallas[index] || '');
-				//});
-				
+				var nombresTallas = JSON.parse(record.data.nombres_tallas || "[]");
+				console.log("Nombres de Tallas:", nombresTallas);
 
+				var numTallasVisibles = 0;
 				$('table.o_list_table thead tr th[data-name^="talla_"]').each(function(index) {
 					if (index < nombresTallas.length) {
-						// Si hay un nombre para la talla, actualiza el encabezado y asegura que la columna es visible
 						$(this).text(nombresTallas[index]);
-						$(this).show();  // Asegura que la columna está visible
+						$(this).show();
+						numTallasVisibles++;
 					} else {
-						// Si no hay nombre para la talla, oculta la columna
-						//$(this).text('');  // Limpia el texto
-						$(this).hide();  // Oculta la columna
+						$(this).hide();
 					}
 				});
-		
+
+				// Ajustar el ancho de las columnas visibles
+				var anchoColumna = 100 / numTallasVisibles;
+				$('table.o_list_table thead tr th[data-name^="talla_"]:visible').css('width', anchoColumna + '%');
 			});
 		},
 
