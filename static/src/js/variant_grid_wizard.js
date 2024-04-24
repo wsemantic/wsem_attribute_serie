@@ -44,37 +44,19 @@ odoo.define('variant_grid_wizard.form', function (require) {
 				var anchoColumna = 100 / numTallasVisibles;
 				$('table.o_list_table thead tr th[data-name^="talla_"]:visible').css('width', anchoColumna + '%');
 				$('table.o_list_table thead tr th[data-name="color_id"]').css('width', anchoColumna + '%');  // Ajustar el ancho de la columna de color
+				self._disableExtraSizeInputs(nombresTallas.length);
 			});
-		},
+		},		
 		
-		_onAddRecord: function (ev) {
-				var self = this;
-				console.log("Agregando nueva línea...");
-				this._super.apply(this, arguments).then(function () {
-					console.log("Nueva línea agregada. Deshabilitando tallas sobrantes...");
-					self._disableExtraSizes();
-				});
-			},
-
-		_disableExtraSizes: function() {
-			var record = this.model.get(this.handle, {raw: true});
-			var nombresTallas = JSON.parse(record.data.nombres_tallas || "[]");
-			console.log("Nombres de tallas:", nombresTallas);
-
-			var lastRow = $('table.o_list_table tbody tr:last-child');
-			console.log("Última fila:", lastRow);
-
-			lastRow.find('td[name^="talla_"]').each(function(index) {
-				console.log("Índice de talla:", index);
-				if (index >= nombresTallas.length) {
-					console.log("Talla sobrante. Deshabilitando entrada de datos...");
-					$(this).addClass('o_readonly');
-				} else {
-					console.log("Talla válida. Habilitando entrada de datos...");
-					$(this).removeClass('o_readonly');
-				}
-			});
-		},
+		_disableExtraSizeInputs: function(numTallas) {
+            $('table.o_list_table tbody tr').each(function() {
+                $(this).find('td[data-field^="talla_"]').each(function(index) {
+                    if (index >= numTallas) {
+                        $(this).find('input').prop('disabled', true); // Deshabilita el input
+                    }
+                });
+            });
+        }
 
     });
 
