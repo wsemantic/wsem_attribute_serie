@@ -78,6 +78,23 @@
 								<field name="talla_1"/>
 								<field name="talla_2"/>
 								<field name="talla_3"/>
+								<field name="talla_4"/>
+								<field name="talla_5"/>
+								<field name="talla_6"/>
+								<field name="talla_7"/>
+								<field name="talla_8"/>
+								<field name="talla_9"/>
+								<field name="talla_10"/>
+								<field name="talla_11"/>
+								<field name="talla_12"/>
+								<field name="talla_13"/>
+								<field name="talla_14"/>
+								<field name="talla_15"/>
+								<field name="talla_16"/>
+								<field name="talla_17"/>
+								<field name="talla_18"/>
+								<field name="talla_19"/>
+								<field name="talla_20"/>
 							</tree>
 							<form>
 								<group>
@@ -85,6 +102,23 @@
 									<field name="talla_1"/>
 									<field name="talla_2"/>
 									<field name="talla_3"/>
+									<field name="talla_4"/>
+									<field name="talla_5"/>
+									<field name="talla_6"/>
+									<field name="talla_7"/>
+									<field name="talla_8"/>
+									<field name="talla_9"/>
+									<field name="talla_10"/>
+									<field name="talla_11"/>
+									<field name="talla_12"/>
+									<field name="talla_13"/>
+									<field name="talla_14"/>
+									<field name="talla_15"/>
+									<field name="talla_16"/>
+									<field name="talla_17"/>
+									<field name="talla_18"/>
+									<field name="talla_19"/>
+									<field name="talla_20"/>
 								</group>
 							</form>
 						</field>

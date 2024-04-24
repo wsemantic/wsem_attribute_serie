@@ -35,7 +35,7 @@ class VariantGridWizard(models.TransientModel):
     
     line_ids = fields.One2many('variant.grid.wizard.line', 'wizard_id', string="Líneas")
     
-    nombres_tallas = fields.Text(string='Nombres de Tallas', default='["T1", "T2", "T3"]')
+    nombres_tallas = fields.Text(string='Nombres de Tallas', default='["T1", "T2", "T3","T4","T5","T6","T7","T8","T9","T10","T11","T12","T13","T14","T15","T16","T17","T18","T19","T20"]')
     
     #@api.model
     #def default_get(self, fields_list):
@@ -69,7 +69,7 @@ class VariantGridWizard(models.TransientModel):
 
         else:
             # Si no hay serie seleccionada, reiniciar a los valores predeterminados
-            self.nombres_tallas = '["Talla 1", "Talla 2", "Talla 3"]'
+            self.nombres_tallas = '["Talla 1", "Talla 2", "Talla 3","Talla 4","Talla 5","Talla 6","Talla 7","Talla 8","Talla 9","Talla 10","Talla 11","Talla 12","Talla 13","Talla 14","Talla 15","Talla 16","Talla 17","Talla 18","Talla 19","Talla 20"]'
 
 
 
@@ -108,6 +108,23 @@ class VariantGridWizardLine(models.TransientModel):
     talla_1 = fields.Char("CTalla 1")
     talla_2 = fields.Char("CTalla 2")
     talla_3 = fields.Char("CTalla 3")
+    talla_4 = fields.Char("CTalla 4")
+    talla_5 = fields.Char("CTalla 5")
+    talla_6 = fields.Char("CTalla 6")
+    talla_7 = fields.Char("CTalla 7")
+    talla_8 = fields.Char("CTalla 8")
+    talla_9 = fields.Char("CTalla 9")
+    talla_10 = fields.Char("CTalla 10")
+    talla_11 = fields.Char("CTalla 11")
+    talla_12 = fields.Char("CTalla 12")
+    talla_13 = fields.Char("CTalla 13")
+    talla_14 = fields.Char("CTalla 14")
+    talla_15 = fields.Char("CTalla 15")
+    talla_16 = fields.Char("CTalla 16")    
+    talla_17 = fields.Char("CTalla 17")
+    talla_18 = fields.Char("CTalla 18")
+    talla_19 = fields.Char("CTalla 19")
+    talla_20 = fields.Char("CTalla 20")
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
