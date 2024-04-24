@@ -145,14 +145,26 @@ class PurchaseOrderLine(models.Model):
                 if cantidad > 0:
                     # Buscar la plantilla de producto en lugar del producto
                     template = self.product_id.product_tmpl_id
+                    _logger.info(f"WSEM template: {template}")
+                    
                     # Buscar la variante que coincida con los valores de atributo
-                    variante = template.product_variant_ids.filtered(lambda x: 
-                        x.product_template_attribute_value_ids.filtered(lambda y: y.name == talla) and 
-                        x.product_template_attribute_value_ids.filtered(lambda y: y.name == color))
+                    variantes = template.product_variant_ids
+                    _logger.info(f"WSEM variantes: {variantes}")
+                    
+                    talla_attribute_value = variantes.mapped('product_template_attribute_value_ids').filtered(lambda x: x.name == talla)
+                    _logger.info(f"WSEM talla_attribute_value: {talla_attribute_value}")
+                    
+                    color_attribute_value = variantes.mapped('product_template_attribute_value_ids').filtered(lambda x: x.name == color)
+                    _logger.info(f"WSEM color_attribute_value: {color_attribute_value}")
+                    
+                    variante = variantes.filtered(lambda x: talla_attribute_value in x.product_template_attribute_value_ids and color_attribute_value in x.product_template_attribute_value_ids)
+                    _logger.info(f"WSEM variante: {variante}")
+                    
                     if variante:
-                        _logger.info(f"WSEM crea variante {self.order_id.id}")
                         self.env['purchase.order.line'].create({
                             'product_id': variante.id,
                             'product_qty': cantidad,
                             'order_id': self.order_id.id,
                         })
+                    else:
+                        _logger.warning(f"WSEM No se encontró variante para talla {talla} y color {color}")
