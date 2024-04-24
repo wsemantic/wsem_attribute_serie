@@ -35,14 +35,17 @@ odoo.define('variant_grid_wizard.form', function (require) {
 						$(this).text(nombresTallas[index]);
 						$(this).show();
 						numTallasVisibles++;
+						$('table.o_list_table tbody tr td[name^="talla_' + (index + 1) + '"]').removeClass('o_readonly');            
 					} else {
 						$(this).hide();
+						$('table.o_list_table tbody tr td[name^="talla_' + (index + 1) + '"]').addClass('o_readonly');
 					}
 				});
 
 				// Ajustar el ancho de las columnas visibles
 				var anchoColumna = 100 / numTallasVisibles;
 				$('table.o_list_table thead tr th[data-name^="talla_"]:visible').css('width', anchoColumna + '%');
+				$('table.o_list_table thead tr th[data-name="color_id"]').css('width', anchoColumna + '%');  // Ajustar el ancho de la columna de color
 			});
 		},
 
