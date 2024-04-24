@@ -58,6 +58,7 @@ class VariantGridWizard(models.TransientModel):
         self._update_table(self.attribute_serie_id.id)
 
     def _update_table(self, serie_id=None):
+        _logger.info("WSEM _update_table")
         if serie_id:
             serie = self.env['attribute.serie'].browse(serie_id)
             tallas = serie.item_ids.mapped('attribute_value_id')
