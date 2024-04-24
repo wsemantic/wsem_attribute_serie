@@ -44,6 +44,13 @@ class VariantGridWizard(models.TransientModel):
     #    res['line_ids'] = [(0, 0, {'color_id': False, 'talla_1': 'Talla 1', 'talla_2': 'Talla 2', 'talla_3': 'Talla 3'})]
     #    return res
 
+    @api.model
+    def default_get(self, fields):
+        res = super(VariantGridWizard, self).default_get(fields)
+        purchase_order_line_id = self.env.context.get('purchase_order_line_id')
+        if purchase_order_line_id:
+            res['purchase_order_line_id'] = purchase_order_line_id
+        return res
 
     @api.onchange('attribute_serie_id')
     def _onchange_attribute_serie_id(self):
