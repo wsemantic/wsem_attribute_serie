@@ -151,6 +151,7 @@
                     <button name="%(action_open_variant_grid_wizard)d" 
                             type="action" 
                             string="Abrir Wizard"
+							save="true"
 							context="{'purchase_order_line_id': id}"/>
                 </xpath>
             </field>
