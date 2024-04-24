@@ -51,6 +51,7 @@ class VariantGridWizard(models.TransientModel):
         return res
 
     @api.onchange('attribute_serie_id')
+    def _onchange_attribute_serie_id(self):
         serie_id=self.attribute_serie_id.id
         _logger.info(f"WSEM _update_table {serie_id}")
         if serie_id:
