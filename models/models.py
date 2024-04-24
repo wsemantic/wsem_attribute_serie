@@ -150,6 +150,7 @@ class PurchaseOrderLine(models.Model):
                         x.product_template_attribute_value_ids.filtered(lambda y: y.name == talla) and 
                         x.product_template_attribute_value_ids.filtered(lambda y: y.name == color))
                     if variante:
+                        _logger.info(f"WSEM crea variante {self.order_id.id}")
                         self.env['purchase.order.line'].create({
                             'product_id': variante.id,
                             'product_qty': cantidad,
