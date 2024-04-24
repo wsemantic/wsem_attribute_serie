@@ -47,38 +47,29 @@ class VariantGridWizard(models.TransientModel):
             product_template = purchase_order_line.product_id.product_tmpl_id
             if product_template.attribute_serie_id:
                 res['attribute_serie_id'] = product_template.attribute_serie_id.id
-                tallas = product_template.attribute_serie_id.item_ids.mapped('attribute_value_id')
-                nombres_tallas = [talla.name for talla in tallas]
-                res['nombres_tallas'] = json.dumps(nombres_tallas)
+                self._update_table(product_template.attribute_serie_id.id)
+            else:
+                self._update_table()
+
         return res
 
     @api.onchange('attribute_serie_id')
     def _onchange_attribute_serie_id(self):
-        if self.attribute_serie_id:
-            # Obtener los nombres de las tallas de la serie seleccionada
-            tallas = self.attribute_serie_id.item_ids.mapped('attribute_value_id')
-            nombres_tallas = [talla.name for talla in tallas][:3]
+        self._update_table(self.attribute_serie_id.id)
 
-            # Asegurarse de que hay al menos 3 nombres (rellenar con vacío si es necesario)
-
-            # Convertir la lista de nombres a un string JSON válido
-            nombres_tallas_json = json.dumps(nombres_tallas)
-            _logger.info(f"WSEM talla 1 {nombres_tallas_json}")
-
-            # Actualizar el campo con el string JSON
-            self.nombres_tallas = nombres_tallas_json
-
-            # Actualizar la fila de encabezado (asumiendo que siempre es la primera línea)
-            
-            #Esto era si la primera fila era el encabezado
-            #for i, nombre_talla in enumerate(nombres_tallas[:3], start=1):
-            #    setattr(self.line_ids[0], f'talla_{i}', nombre_talla)
-
+    def _update_table(self, serie_id=None):
+        if serie_id:
+            serie = self.env['attribute.serie'].browse(serie_id)
+            tallas = serie.item_ids.mapped('attribute_value_id')
+            nombres_tallas = [talla.name for talla in tallas]
         else:
-            # Si no hay serie seleccionada, reiniciar a los valores predeterminados
-            self.nombres_tallas = '["Talla 1", "Talla 2", "Talla 3","Talla 4","Talla 5","Talla 6","Talla 7","Talla 8","Talla 9","Talla 10","Talla 11","Talla 12","Talla 13","Talla 14","Talla 15","Talla 16","Talla 17","Talla 18","Talla 19","Talla 20"]'
+            nombres_tallas = ["Talla 1", "Talla 2", "Talla 3","Talla 4","Talla 5","Talla 6","Talla 7","Talla 8","Talla 9","Talla 10","Talla 11","Talla 12","Talla 13","Talla 14","Talla 15","Talla 16","Talla 17","Talla 18","Talla 19","Talla 20"]
 
+        # Convertir la lista de nombres a un string JSON válido
+        nombres_tallas_json = json.dumps(nombres_tallas)
 
+        # Actualizar el campo con el string JSON
+        self.nombres_tallas = nombres_tallas_json
 
                     
     def button_accept(self):
