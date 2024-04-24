@@ -143,9 +143,12 @@ class PurchaseOrderLine(models.Model):
                 _logger.info(f"WSEM dentro color: itera color {color} cantidad {cantidad}")
                 
                 if cantidad > 0:
-                    variante = self.product_id.product_variant_ids.filtered(lambda x: 
-                        x.attribute_value_ids.filtered(lambda y: y.name == talla) and 
-                        x.attribute_value_ids.filtered(lambda y: y.name == color))
+                    # Buscar la plantilla de producto en lugar del producto
+                    template = self.product_id.product_tmpl_id
+                    # Buscar la variante que coincida con los valores de atributo
+                    variante = template.product_variant_ids.filtered(lambda x: 
+                        x.product_template_attribute_value_ids.filtered(lambda y: y.name == talla) and 
+                        x.product_template_attribute_value_ids.filtered(lambda y: y.name == color))
                     if variante:
                         self.env['purchase.order.line'].create({
                             'product_id': variante.id,
