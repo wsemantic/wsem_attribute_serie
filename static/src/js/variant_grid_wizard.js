@@ -34,11 +34,9 @@ odoo.define('variant_grid_wizard.form', function (require) {
 					if (index < nombresTallas.length) {
 						$(this).text(nombresTallas[index]);
 						$(this).show();
-						numTallasVisibles++;
-						$('table.o_list_table tbody tr td[name^="talla_' + (index + 1) + '"]').removeClass('o_readonly');            
+						numTallasVisibles++;						         
 					} else {
-						$(this).hide();
-						$('table.o_list_table tbody tr td[name^="talla_' + (index + 1) + '"]').addClass('o_readonly');
+						$(this).hide();						
 					}
 				});
 
@@ -46,6 +44,23 @@ odoo.define('variant_grid_wizard.form', function (require) {
 				var anchoColumna = 100 / numTallasVisibles;
 				$('table.o_list_table thead tr th[data-name^="talla_"]:visible').css('width', anchoColumna + '%');
 				$('table.o_list_table thead tr th[data-name="color_id"]').css('width', anchoColumna + '%');  // Ajustar el ancho de la columna de color
+			});
+		},
+		_onAddRecord: function (ev) {
+			var self = this;
+			this._super.apply(this, arguments).then(function () {
+				self._disableExtraSizes();
+			});
+		},
+
+		_disableExtraSizes: function() {
+			var record = this.model.get(this.handle, {raw: true});
+			var nombresTallas = JSON.parse(record.data.nombres_tallas || "[]");
+
+			$('table.o_list_table tbody tr:last-child td[name^="talla_"]').each(function(index) {
+				if (index >= nombresTallas.length) {
+					$(this).addClass('o_readonly');
+				}
 			});
 		},
 
