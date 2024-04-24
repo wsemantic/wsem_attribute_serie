@@ -47,7 +47,7 @@ class VariantGridWizard(models.TransientModel):
             product_template = purchase_order_line.product_id.product_tmpl_id
             if product_template.attribute_serie_id:
                 res['attribute_serie_id'] = product_template.attribute_serie_id.id
-                self._update_table(product_template.attribute_serie_id.id)
+                #self._update_table(product_template.attribute_serie_id.id)
             else:
                 self._update_table()
 
