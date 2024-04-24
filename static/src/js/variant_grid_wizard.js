@@ -52,7 +52,6 @@ odoo.define('variant_grid_wizard.form', function (require) {
             $('table.o_list_table tbody tr').each(function() {
                 $(this).find('td[name^="talla_"]').each(function(index) {
                     if (index >= numTallas) {
-						console.log("Deshabilitando:", index);
                         $(this).find('input').prop('disabled', true); // Deshabilita el input
                     }
                 });

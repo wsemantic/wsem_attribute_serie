@@ -76,7 +76,9 @@ class VariantGridWizard(models.TransientModel):
                     
     def button_accept(self):
         # Crear las líneas de variantes según las cantidades ingresadas
+        _logger.info(f"WSEM Pulsado aceptar")
         if self.purchase_order_line_id:
+            _logger.info(f"WSEM existe linea de compra {self.purchase_order_line_id.id}")
             variant_grid = {
                 'tallas': [detail.talla_1 for detail in self.detail_ids if detail.talla_1],
                 'colores': [detail.color_id.name for detail in self.detail_ids if detail.color_id],
@@ -84,6 +86,7 @@ class VariantGridWizard(models.TransientModel):
             for detail in self.detail_ids:
                 if detail.color_id:
                     for talla in variant_grid['tallas']:
+                        _logger.info(f"WSEM itera talla {talla}")
                         cantidad = getattr(detail, f'{talla}', 0)
                         if cantidad > 0:
                             variant_grid[f'{talla}_{detail.color_id.name}'] = cantidad
@@ -133,8 +136,12 @@ class PurchaseOrderLine(models.Model):
         variant_grid = self.env.context.get('variant_grid', {})
 
         for talla in variant_grid.get('tallas', []):
+            _logger.info(f"WSEM dentro crear: itera talla {talla}")
             for color in variant_grid.get('colores', []):
+                
                 cantidad = variant_grid.get(f'{talla}_{color}', 0)
+                _logger.info(f"WSEM dentro color: itera color {color} cantidad {cantidad}")
+                
                 if cantidad > 0:
                     variante = self.product_id.product_variant_ids.filtered(lambda x: 
                         x.attribute_value_ids.filtered(lambda y: y.name == talla) and 
