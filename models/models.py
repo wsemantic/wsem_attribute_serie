@@ -43,6 +43,13 @@ class VariantGridWizard(models.TransientModel):
         purchase_order_line_id = self.env.context.get('purchase_order_line_id')
         if purchase_order_line_id:
             res['purchase_order_line_id'] = purchase_order_line_id
+            purchase_order_line = self.env['purchase.order.line'].browse(purchase_order_line_id)
+            product_template = purchase_order_line.product_id.product_tmpl_id
+            if product_template.attribute_serie_id:
+                res['attribute_serie_id'] = product_template.attribute_serie_id.id
+                tallas = product_template.attribute_serie_id.item_ids.mapped('attribute_value_id')
+                nombres_tallas = [talla.name for talla in tallas]
+                res['nombres_tallas'] = json.dumps(nombres_tallas)
         return res
 
     @api.onchange('attribute_serie_id')
@@ -83,6 +90,8 @@ class VariantGridWizard(models.TransientModel):
                 'tallas': json.loads(self.nombres_tallas),  # Convertir de JSON a lista
                 'colores': [line.color_id.name for line in self.line_ids if line.color_id],
             }
+            self.purchase_order_line_id.product_id.product_tmpl_id.attribute_serie_id = self.attribute_serie_id
+            
             for line in self.line_ids:
                 if line.color_id:
                     for i, talla in enumerate(variant_grid['tallas'], start=1):
@@ -91,6 +100,7 @@ class VariantGridWizard(models.TransientModel):
                         if cantidad:
                             variant_grid[f'{talla}_{line.color_id.name}'] = int(cantidad)
 
+        
             # Llamar al método create_variant_lines en la línea de pedido de compra
             self.purchase_order_line_id.with_context(variant_grid=variant_grid).create_variant_lines()
 
