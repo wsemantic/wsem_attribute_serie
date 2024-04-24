@@ -128,7 +128,8 @@ class VariantGridWizardLine(models.TransientModel):
     talla_18 = fields.Char("T18")
     talla_19 = fields.Char("T19")
     talla_20 = fields.Char("T20")
-
+    
+    
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
@@ -145,25 +146,35 @@ class PurchaseOrderLine(models.Model):
         for talla in variant_grid.get('tallas', []):
             _logger.info(f"WSEM dentro crear: itera talla {talla}")
             
-            # Verificar si el valor de atributo de Talla existe, si no, crearlo
-            talla_value = talla_attribute.value_ids.filtered(lambda x: x.name == talla)
+            # Obtener el valor de atributo de Talla
+            talla_value = self.env['product.attribute.value'].search([
+                ('name', '=', talla),
+                ('attribute_id', '=', talla_attribute.attribute_id.id)
+            ], limit=1)
+            
             if not talla_value:
-                talla_value = self.env['product.attribute.value'].create({
-                    'name': talla,
-                    'attribute_id': talla_attribute.attribute_id.id
-                })
+                _logger.info(f"WSEM error no existe talla")
+                
+            # Verificar si el valor de atributo de Talla está asociado al producto, si no, asociarlo
+            if talla_value and talla_value not in talla_attribute.value_ids:
+                _logger.info(f"WSEM asociando talla a producto")
                 talla_attribute.value_ids |= talla_value
 
             for color in variant_grid.get('colores', []):
                 _logger.info(f"WSEM dentro color: itera color {color} cantidad {variant_grid.get(f'{talla}_{color}', 0)}")
                 
-                # Verificar si el valor de atributo de Color existe, si no, crearlo
-                color_value = color_attribute.value_ids.filtered(lambda x: x.name == color)
+                # Obtener el valor de atributo de Color
+                color_value = self.env['product.attribute.value'].search([
+                    ('name', '=', color),
+                    ('attribute_id', '=', color_attribute.attribute_id.id)
+                ], limit=1)
+                
                 if not color_value:
-                    color_value = self.env['product.attribute.value'].create({
-                        'name': color,
-                        'attribute_id': color_attribute.attribute_id.id
-                    })
+                    _logger.info(f"WSEM error no existe color")
+                    
+                # Verificar si el valor de atributo de Color está asociado al producto, si no, asociarlo
+                if color_value and color_value not in color_attribute.value_ids:
+                    _logger.info(f"WSEM asociando color a producto")
                     color_attribute.value_ids |= color_value
 
                 # Verificar si la variante existe, si no, crearla
