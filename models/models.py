@@ -46,26 +46,18 @@ class VariantGridWizard(models.TransientModel):
             purchase_order_line = self.env['purchase.order.line'].browse(purchase_order_line_id)
             product_template = purchase_order_line.product_id.product_tmpl_id
             if product_template.attribute_serie_id:
-                res['attribute_serie_id'] = product_template.attribute_serie_id.id
-                #self._update_table(product_template.attribute_serie_id.id)
-            else:
-                self._update_table()
+                res['attribute_serie_id'] = product_template.attribute_serie_id.id                
 
         return res
 
     @api.onchange('attribute_serie_id')
-    def _onchange_attribute_serie_id(self):
-        self._update_table(self.attribute_serie_id.id)
-
-    def _update_table(self, serie_id=None):
+        serie_id=self.attribute_serie_id.id
         _logger.info(f"WSEM _update_table {serie_id}")
         if serie_id:
             serie = self.env['attribute.serie'].browse(serie_id)
             tallas = serie.item_ids.mapped('attribute_value_id')
             nombres_tallas = [talla.name for talla in tallas]
-        else:
-            nombres_tallas = ["Talla 1", "Talla 2", "Talla 3","Talla 4","Talla 5","Talla 6","Talla 7","Talla 8","Talla 9","Talla 10","Talla 11","Talla 12","Talla 13","Talla 14","Talla 15","Talla 16","Talla 17","Talla 18","Talla 19","Talla 20"]
-
+    
         # Convertir la lista de nombres a un string JSON válido
         nombres_tallas_json = json.dumps(nombres_tallas)
 
