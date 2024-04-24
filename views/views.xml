@@ -150,8 +150,7 @@
                     <!-- Añadir botón en la vista de lista de las líneas de pedido. Asegúrate de reemplazar 'action_open_variant_grid_wizard' con el ID de tu acción -->
                     <button name="%(action_open_variant_grid_wizard)d" 
                             type="action" 
-                            string="Abrir Wizard"
-							save="true"
+                            string="Abrir Wizard"							
 							context="{'purchase_order_line_id': id}"/>
                 </xpath>
             </field>

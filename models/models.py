@@ -135,40 +135,49 @@ class PurchaseOrderLine(models.Model):
     def create_variant_lines(self):
         variant_grid = self.env.context.get('variant_grid', {})
 
+        # Obtener la plantilla de producto
+        template = self.product_id.product_tmpl_id
+        
+        # Obtener los atributos de Talla y Color de la plantilla de producto
+        talla_attribute = template.attribute_line_ids.filtered(lambda x: x.attribute_id.name == 'Talla')
+        color_attribute = template.attribute_line_ids.filtered(lambda x: x.attribute_id.name == 'Color')
+
         for talla in variant_grid.get('tallas', []):
             _logger.info(f"WSEM dentro crear: itera talla {talla}")
+            
+            # Verificar si el valor de atributo de Talla existe, si no, crearlo
+            talla_value = talla_attribute.value_ids.filtered(lambda x: x.name == talla)
+            if not talla_value:
+                talla_value = self.env['product.attribute.value'].create({
+                    'name': talla,
+                    'attribute_id': talla_attribute.attribute_id.id
+                })
+                talla_attribute.value_ids |= talla_value
+
             for color in variant_grid.get('colores', []):
+                _logger.info(f"WSEM dentro color: itera color {color} cantidad {variant_grid.get(f'{talla}_{color}', 0)}")
                 
+                # Verificar si el valor de atributo de Color existe, si no, crearlo
+                color_value = color_attribute.value_ids.filtered(lambda x: x.name == color)
+                if not color_value:
+                    color_value = self.env['product.attribute.value'].create({
+                        'name': color,
+                        'attribute_id': color_attribute.attribute_id.id
+                    })
+                    color_attribute.value_ids |= color_value
+
+                # Verificar si la variante existe, si no, crearla
+                variant = template.product_variant_ids.filtered(lambda x: 
+                    talla_value in x.product_template_attribute_value_ids.mapped('product_attribute_value_id') and
+                    color_value in x.product_template_attribute_value_ids.mapped('product_attribute_value_id'))
+                if not variant:
+                    variant = template.create_variant_ids([(talla_attribute.attribute_id.id, talla_value.id), (color_attribute.attribute_id.id, color_value.id)])
+
+                # Crear la línea de pedido de compra para la variante
                 cantidad = variant_grid.get(f'{talla}_{color}', 0)
-                _logger.info(f"WSEM dentro color: itera color {color} cantidad {cantidad}")
-                
                 if cantidad > 0:
-                    # Buscar la plantilla de producto en lugar del producto
-                    template = self.product_id.product_tmpl_id
-                    _logger.info(f"WSEM template: {template}")
-                    
-                    # Buscar la variante que coincida con los valores de atributo
-                    variantes = template.product_variant_ids
-                    _logger.info(f"WSEM variantes: {variantes}")
-                    
-                    talla_attribute_value = variantes.mapped('product_template_attribute_value_ids').filtered(lambda x: x.name == talla)
-                    
-                    if talla_attribute_value:
-                        _logger.info(f"WSEM primer valor de talla_attribute_value: {talla_attribute_value[0]}")
-                    else:
-                        _logger.info("WSEM talla_attribute_value está vacío")
-                    
-                    color_attribute_value = variantes.mapped('product_template_attribute_value_ids').filtered(lambda x: x.name == color)
-                    _logger.info(f"WSEM color_attribute_value: {color_attribute_value}")
-                    
-                    variante = variantes.filtered(lambda x: talla_attribute_value in x.product_template_attribute_value_ids and color_attribute_value in x.product_template_attribute_value_ids)
-                    _logger.info(f"WSEM variante: {variante}")
-                    
-                    if variante:
-                        self.env['purchase.order.line'].create({
-                            'product_id': variante.id,
-                            'product_qty': cantidad,
-                            'order_id': self.order_id.id,
-                        })
-                    else:
-                        _logger.warning(f"WSEM No se encontró variante para talla {talla} y color {color}")
+                    self.env['purchase.order.line'].create({
+                        'product_id': variant.id,
+                        'product_qty': cantidad,
+                        'order_id': self.order_id.id,
+                    })
