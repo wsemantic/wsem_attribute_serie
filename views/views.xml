@@ -137,7 +137,7 @@
 			<field name="res_model">variant.grid.wizard</field>
 			<field name="view_mode">form</field>
 			<field name="target">new</field>
-			<field name="context">{'purchase_order_line_id': active_id}</field>
+			<!--<field name="context">{'purchase_order_line_id': active_id}</field>-->
 		</record>
 		
 		<!-- Extender la vista de formulario de la orden de compra para añadir un botón a la vista de lista embebida de líneas de pedido -->
@@ -150,7 +150,8 @@
                     <!-- Añadir botón en la vista de lista de las líneas de pedido. Asegúrate de reemplazar 'action_open_variant_grid_wizard' con el ID de tu acción -->
                     <button name="%(action_open_variant_grid_wizard)d" 
                             type="action" 
-                            string="Abrir Wizard"/>
+                            string="Abrir Wizard"
+							context="{'purchase_order_line_id': id}"/>
                 </xpath>
             </field>
         </record>
