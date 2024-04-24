@@ -152,7 +152,11 @@ class PurchaseOrderLine(models.Model):
                     _logger.info(f"WSEM variantes: {variantes}")
                     
                     talla_attribute_value = variantes.mapped('product_template_attribute_value_ids').filtered(lambda x: x.name == talla)
-                    _logger.info(f"WSEM talla_attribute_value: {talla_attribute_value}")
+                    
+                    if talla_attribute_value:
+                        _logger.info(f"WSEM primer valor de talla_attribute_value: {talla_attribute_value[0]}")
+                    else:
+                        _logger.info("WSEM talla_attribute_value está vacío")
                     
                     color_attribute_value = variantes.mapped('product_template_attribute_value_ids').filtered(lambda x: x.name == color)
                     _logger.info(f"WSEM color_attribute_value: {color_attribute_value}")
