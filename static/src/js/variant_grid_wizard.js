@@ -37,13 +37,13 @@ odoo.define('variant_grid_wizard.form', function (require) {
 				
 
 				$('table.o_list_table thead tr th[data-name^="talla_"]').each(function(index) {
-					if (index <= nombresTallas.length) {
+					if (index < nombresTallas.length) {
 						// Si hay un nombre para la talla, actualiza el encabezado y asegura que la columna es visible
 						$(this).text(nombresTallas[index]);
 						$(this).show();  // Asegura que la columna está visible
 					} else {
 						// Si no hay nombre para la talla, oculta la columna
-						$(this).text('');  // Limpia el texto
+						//$(this).text('');  // Limpia el texto
 						$(this).hide();  // Oculta la columna
 					}
 				});
