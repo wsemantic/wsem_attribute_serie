@@ -31,10 +31,23 @@ odoo.define('variant_grid_wizard.form', function (require) {
 				var nombresTallas = JSON.parse(record.data.nombres_tallas || "[]");				
 				console.log("Nombres de Tallas:", nombresTallas);											
 				
+				//$('table.o_list_table thead tr th[data-name^="talla_"]').each(function(index) {					
+				//	$(this).text(nombresTallas[index] || '');
+				//});
+				
+
 				$('table.o_list_table thead tr th[data-name^="talla_"]').each(function(index) {
-					// Se actualiza el texto de cada cabecera de columna con los nombres de las tallas
-					$(this).text(nombresTallas[index] || '');
+					if (index < nombresTallas.length) {
+						// Si hay un nombre para la talla, actualiza el encabezado y asegura que la columna es visible
+						$(this).text(nombresTallas[index]);
+						$(this).show();  // Asegura que la columna está visible
+					} else {
+						// Si no hay nombre para la talla, oculta la columna
+						$(this).text('');  // Limpia el texto
+						$(this).hide();  // Oculta la columna
+					}
 				});
+		
 			});
 		},
 
