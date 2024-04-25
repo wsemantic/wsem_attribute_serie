@@ -29,6 +29,6 @@ class ProductTemplate(models.Model):
             if attribute_id:
                 self.attribute_line_ids = [(0, 0, {
                     'attribute_id': attribute_id.id,
-                    'value_ids': [(fields.Command.SET, 0, self.attribute_serie_id.item_ids.mapped('attribute_value_id').ids)]
+                    'value_ids': [(6, 0, self.attribute_serie_id.item_ids.mapped('attribute_value_id').ids)]
                 })]
     
