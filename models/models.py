@@ -48,3 +48,7 @@ class ProductTemplate(models.Model):
     
     
  
+ class ProductAttributeValue(models.Model):
+    _inherit = 'product.attribute.value'
+
+    code = fields.Char(string='Code', help="Codigo")
