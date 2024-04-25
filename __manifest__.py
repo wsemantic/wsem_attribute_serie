@@ -23,9 +23,6 @@
     'depends': ['sale'], 
 
     'assets': {
-        'web.assets_backend': [
-           'wsem_attribute_serie/static/src/js/variant_grid_wizard.js',
-        ],
     },
 
     # always loaded
