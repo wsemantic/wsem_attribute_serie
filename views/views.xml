@@ -63,9 +63,9 @@
 			</field>
 		</record>
 
-		<record id="product_attribute_value_view_form_inherit" model="ir.ui.view">
-			<field name="name">product.attribute.value.form</field>
-			<field name="model">product.attribute.value</field>
+		<record id="product_attribute_view_form_inherit" model="ir.ui.view">
+			<field name="name">product.attribute.form</field>
+			<field name="model">product.attribute</field>
 			<field name="inherit_id" ref="product.product_attribute_view_form"/>
 			<field name="arch" type="xml">
 				<xpath expr="//field[@name='html_color']" position="after">
