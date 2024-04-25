@@ -62,7 +62,7 @@
 				</xpath>
 			</field>
 		</record>
-
+<!--
 		<record id="product_attribute_value_view_form_inherit" model="ir.ui.view">
 			<field name="name">product.attribute.value.form</field>
 			<field name="model">product.attribute.value</field>
@@ -72,7 +72,7 @@
 					<field name="code"/>
 				</xpath>
 			</field>
-		</record>
+		</record>-->
 
 	</data>
 </odoo>
