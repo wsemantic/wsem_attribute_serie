@@ -125,6 +125,26 @@ class VariantGridWizardLine(models.TransientModel):
     
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
+    
+    @api.model
+    def create(self, vals):
+        # Crear la línea de pedido normalmente
+        record = super(PurchaseOrderLine, self).create(vals)
+
+        # Comprobar si el producto actúa como plantilla
+        if 'product_id' in vals:
+            product = self.env['product.product'].browse(vals['product_id'])
+            if product.name.lower().startswith('serie'):  # Verifica si el nombre comienza con 'serie'
+                # Clonar el producto
+                new_product = product.copy()
+                # Cambiar el nombre del nuevo producto, si es necesario
+                new_product.name = "Copia de " + product.name
+                # Añadir una nueva línea de pedido con el producto clonado
+                new_vals = vals.copy()
+                new_vals['product_id'] = new_product.id
+                super(PurchaseOrderLine, self).create(new_vals)
+
+        return record
 
     def create_variant_lines(self):
         variant_grid = self.env.context.get('variant_grid', {})
