@@ -24,6 +24,12 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     attribute_serie_id = fields.Many2one('attribute.serie', string='Attribute Serie')
+    
+    @api.model
+    def create(self, vals):
+        if not vals.get('default_code'):
+            vals['default_code'] = self.env['ir.sequence'].next_by_code('product.template.ref')
+        return super(ProductTemplate, self).create(vals)
 
     @api.onchange('attribute_serie_id')
     def _onchange_attribute_serie_id(self):
