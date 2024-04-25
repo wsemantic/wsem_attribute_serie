@@ -13,9 +13,12 @@ class AttributeSerie(models.Model):
 class AttributeSerieItem(models.Model):
     _name = 'attribute.serie.item'
     _description = 'Attribute Serie Item'
+    _order = 'sequence'
+
 
     attribute_serie_id = fields.Many2one('attribute.serie', string='Attribute Serie', required=True, ondelete='cascade')
     attribute_value_id = fields.Many2one('product.attribute.value', string='Attribute Value', required=True)
+    sequence = fields.Integer(string='Sequence')
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
