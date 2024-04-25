@@ -27,8 +27,8 @@ class ProductTemplate(models.Model):
     
     @api.model
     def create(self, vals):
-        if not vals.get('default_code'):
-            vals['default_code'] = self.env['ir.sequence'].next_by_code('product.template.ref')
+        if not vals.get('barcode'):
+            vals['barcode'] = self.env['ir.sequence'].next_by_code('product.template.ref')
         return super(ProductTemplate, self).create(vals)
 
     @api.onchange('attribute_serie_id')
