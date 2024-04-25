@@ -22,6 +22,20 @@ class ProductTemplate(models.Model):
 
     attribute_serie_id = fields.Many2one('attribute.serie', string='Attribute Serie')
 
+class ProductTemplate(models.Model):
+    _inherit = 'product.template'
+
+    attribute_serie_id = fields.Many2one('attribute.serie', string='Attribute Serie')
+
+    @api.onchange('attribute_serie_id')
+    def _onchange_attribute_serie_id(self):
+        if self.attribute_serie_id:
+            attribute_id = self.env['product.attribute'].search([('name', '=', 'Talla')], limit=1)
+            if attribute_id:
+                self.attribute_line_ids = [(0, 0, {
+                    'attribute_id': attribute_id.id,
+                    'value_ids': [(6, 0, self.attribute_serie_id.item_ids.mapped('attribute_value_id').ids)]
+                })]
 
 class VariantGridWizard(models.TransientModel):
     _name = 'variant.grid.wizard'
@@ -130,6 +144,7 @@ class PurchaseOrderLine(models.Model):
     def create(self, vals):
         # Crear la línea de pedido normalmente
         record = super(PurchaseOrderLine, self).create(vals)
+        _logger.info(f"WSEM 
 
         # Comprobar si el producto actúa como plantilla
         if 'product_id' in vals:
