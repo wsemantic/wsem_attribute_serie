@@ -9,7 +9,7 @@
 			</record>
 			
 			<record id="sequence_product_template_ref" model="ir.sequence">
-				<field name="name">ProductTemplate Ref</field>
+				<field name="name">Product Template Ref</field>
 				<field name="code">product.template.ref</field>
 				<field name="prefix">ATTRVAL/</field>
 				<field name="padding">5</field>
