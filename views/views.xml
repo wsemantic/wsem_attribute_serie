@@ -68,9 +68,10 @@
 			<field name="model">product.attribute.value</field>
 			<field name="inherit_id" ref="product.product_attribute_value_view_form"/>
 			<field name="arch" type="xml">
-				<field name="name" position="after">
+				<xpath expr="//field[@name='name']" position="before">
+					<field name="sequence" widget="handle"/>
 					<field name="code"/>
-				</field>
+				</xpath>
 			</field>
 		</record>
 
@@ -79,9 +80,10 @@
 			<field name="model">product.attribute.value</field>
 			<field name="inherit_id" ref="product.variants_tree_view"/>
 			<field name="arch" type="xml">
-				<field name="name" position="after">
+				<xpath expr="//field[@name='name']" position="before">
+					<field name="sequence" widget="handle"/>
 					<field name="code"/>
-				</field>
+				</xpath>
 			</field>
 		</record>
 	</data>
