@@ -6,7 +6,7 @@
 
         <!-- Acción para abrir la vista de lista de series de atributos -->
         <record id="action_attribute_serie" model="ir.actions.act_window">
-            <field name="name">Attribute Series</field>
+            <field name="name">Series Tallas</field>
             <field name="res_model">attribute.serie</field>
             <field name="view_mode">tree,form</field>
         </record>

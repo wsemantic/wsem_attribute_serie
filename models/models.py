@@ -5,7 +5,7 @@ _logger = logging.getLogger(__name__)
 
 class AttributeSerie(models.Model):
     _name = 'attribute.serie'
-    _description = 'Attribute Serie'
+    _description = 'Series Tallas'
 
     name = fields.Char(string='Name', required=True)
     item_ids = fields.One2many('attribute.serie.item', 'attribute_serie_id', string='Items')
@@ -16,14 +16,14 @@ class AttributeSerieItem(models.Model):
     _order = 'sequence'
 
 
-    attribute_serie_id = fields.Many2one('attribute.serie', string='Attribute Serie', required=True, ondelete='cascade')
-    attribute_value_id = fields.Many2one('product.attribute.value', string='Attribute Value', required=True)
-    sequence = fields.Integer(string='Sequence')
+    attribute_serie_id = fields.Many2one('attribute.serie', string='Serie Tallas', required=True, ondelete='cascade')
+    attribute_value_id = fields.Many2one('product.attribute.value', string='Valor', required=True)
+    sequence = fields.Integer(string='Sequencia')
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    attribute_serie_id = fields.Many2one('attribute.serie', string='Attribute Serie')    
+    attribute_serie_id = fields.Many2one('attribute.serie', string='Serie Tallas')    
 
     @api.onchange('attribute_serie_id')
     def _onchange_attribute_serie_id(self):
