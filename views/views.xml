@@ -12,7 +12,7 @@
         </record>
 
         <!-- Menú para la acción de series de atributos -->
-        <menuitem id="menu_attribute_serie_list" name="Attribute Series" parent="menu_attribute_serie" action="action_attribute_serie" sequence="1"/>
+        <menuitem id="menu_attribute_serie_list" name="Series Tallas" parent="menu_attribute_serie" action="action_attribute_serie" sequence="1"/>
 
         <!-- Vista de lista para series de atributos -->
         <record id="view_attribute_serie_tree" model="ir.ui.view">
