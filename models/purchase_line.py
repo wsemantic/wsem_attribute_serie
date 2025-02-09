@@ -12,8 +12,7 @@ class PurchaseOrderLine(models.Model):
             #  - Tienen price_unit igual a 0 (no han sido modificadas)
             #  - Aún no han sido persistidas en la base de datos (line.id es False)
             similar_lines = self.order_id.order_line.filtered(
-                lambda line: (not line.id) and
-                             line.product_id.product_tmpl_id == self.product_id.product_tmpl_id and
+                lambda line: line.product_id.product_tmpl_id == self.product_id.product_tmpl_id and
                              (not line.price_unit or line.price_unit == 0)
             )
             if similar_lines:
