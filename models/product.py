@@ -30,7 +30,7 @@ class ProductTemplate(models.Model):
                         'value_ids': [(6, 0, attribute_value_ids)]
                     })]
     
-    @api.constrains('type', 'serie_tallas', 'list_price', 'standard_price', 'attribute_line_ids')
+    @api.constrains('type', 'serie_tallas', 'list_price', 'seller_ids', 'attribute_line_ids')
     def _check_custom_fields(self):
         # Se ejecuta para cada producto
         for product in self:
@@ -43,11 +43,15 @@ class ProductTemplate(models.Model):
                 if not product.list_price or product.list_price <= 0:
                     raise ValidationError(_("Para los productos almacenable, el precio de venta debe ser mayor que cero."))
 
-                if not product.standard_price or product.standard_price==0:
+                if not product.seller_ids:
                     raise ValidationError(_(
-                        "Para los productos almacenable debe existir Coste."
+                        "Para los productos almacenable debe existir al menos un registro de precio de compra en los Proveedores."
                     ))
-
+                # Opcional: verifica que al menos uno de los registros tenga un precio mayor que cero
+                if not any(s.price > 0 for s in product.seller_ids):
+                    raise ValidationError(_(
+                        "Para los productos almacenable, al menos uno de los registros en Proveedores debe tener un precio de compra mayor que cero."
+                    ))
 
                 # Validar que exista al menos una línea de atributo para el Color
                 # Suponiendo que tienes un atributo para Color y que puedes obtener su referencia,
