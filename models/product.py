@@ -7,7 +7,18 @@ _logger = logging.getLogger(__name__)
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    attribute_serie_id = fields.Many2one('attribute.serie', string='Serie Tallas')    
+    attribute_serie_id = fields.Many2one('attribute.serie', string='Serie Tallas')  
+
+    type = fields.Selection(
+        selection=[
+            ('consu', 'Consumible'),
+            ('product', 'Almacenable'),
+            ('service', 'Servicio')
+        ],
+        string='Tipo de Producto',
+        required=True,
+        default='product',  # Valor por defecto: almacenable
+    )    
 
     @api.onchange('attribute_serie_id')
     def _onchange_attribute_serie_id(self):
