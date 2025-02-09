@@ -42,7 +42,7 @@ class ProductTemplate(models.Model):
                 # Validar que se haya ingresado un precio de venta mayor que cero
                 if not product.list_price or product.list_price <= 0:
                     raise ValidationError(_("Para los productos almacenable, el precio de venta debe ser mayor que cero."))
-                
+                '''
                 if not product.seller_ids:
                     raise ValidationError(_(
                         "Para los productos almacenable debe existir al menos un registro de precio de compra en los Proveedores."
@@ -52,7 +52,7 @@ class ProductTemplate(models.Model):
                     raise ValidationError(_(
                         "Para los productos almacenable, al menos uno de los registros en Proveedores debe tener un precio de compra mayor que cero."
                     ))
-
+                '''
                 # Validar que exista al menos una línea de atributo para el Color
                 # Suponiendo que tienes un atributo para Color y que puedes obtener su referencia,
                 # por ejemplo, mediante un XML ID en tu módulo:
