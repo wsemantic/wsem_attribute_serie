@@ -20,5 +20,5 @@ class PurchaseOrderLine(models.Model):
                              (not line.price_unit or line.price_unit == 0)
             )
             if similar_lines:
-                _logger.info(f"WSEM linea similar")
+                _logger.info(f"WSEM linea similar {self.price_unit}")
                 similar_lines.price_unit = self.price_unit
