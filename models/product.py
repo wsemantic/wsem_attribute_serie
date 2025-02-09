@@ -9,12 +9,6 @@ class ProductTemplate(models.Model):
 
     attribute_serie_id = fields.Many2one('attribute.serie', string='Serie Tallas')  
 
-    @api.model
-    def default_get(self, fields_list):
-        defaults = super(ProductTemplate, self).default_get(fields_list)
-        defaults['type'] = 'product'  # 'product' corresponde a un producto almacenable
-        return defaults
-
     @api.onchange('attribute_serie_id')
     def _onchange_attribute_serie_id(self):
         if self.attribute_serie_id:
