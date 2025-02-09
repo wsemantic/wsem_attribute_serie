@@ -11,8 +11,8 @@ class ProductTemplate(models.Model):
 
     type = fields.Selection(
         selection=[
-            ('consu', 'Consumible'),
             ('product', 'Almacenable'),
+            ('consu', 'Consumible'),
             ('service', 'Servicio')
         ],
         string='Tipo de Producto',
