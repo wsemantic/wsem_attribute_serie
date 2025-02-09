@@ -43,7 +43,7 @@ class ProductTemplate(models.Model):
                 if not product.list_price or product.list_price <= 0:
                     raise ValidationError(_("Para los productos almacenable, el precio de venta debe ser mayor que cero."))
 
-                if not product.standard_price or product.standard_price=0:
+                if not product.standard_price or product.standard_price==0:
                     raise ValidationError(_(
                         "Para los productos almacenable debe existir Coste."
                     ))
