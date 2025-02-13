@@ -59,6 +59,34 @@ class ProductTemplate(models.Model):
                 color_lines = product.attribute_line_ids.filtered(lambda l: l.attribute_id.name.lower() == 'color')
                 if not color_lines or not any(line.value_ids for line in color_lines):
                     raise ValidationError(_("Debe agregarse al menos un valor para el atributo 'Color' en el producto."))
+                    
+    def name_get(self):
+        # Llamamos al método original para conservar parte de la lógica (por ejemplo, el código)
+        super_res = super(ProductProduct, self).name_get()
+        # Convertimos el resultado a diccionario para fácil acceso
+        super_names = dict(super_res)
+        result = []
+        for product in self:
+            # Extraemos el nombre base que normalmente incluiría el código y el nombre del producto.
+            # Por ejemplo: "[ABC] Producto X"
+            base_name = super_names.get(product.id, product.name)
+            # Si queremos asegurarnos de no duplicar información (en caso de que ya tenga paréntesis),
+            # separamos el nombre base eliminando la parte de la variante que pudiera haber.
+            base_name = base_name.split(" (")[0]
+
+            # Obtenemos todos los valores de los atributos, sin filtrar si son únicos o no.
+            attribute_values = product.product_template_attribute_value_ids.mapped('name')
+            if attribute_values:
+                # Concatenamos todos los atributos (puedes cambiar la coma por otro separador si lo deseas)
+                combo = ", ".join(attribute_values)
+                # Concatenamos el nombre base con los atributos entre paréntesis
+                display_name = "%s (%s)" % (base_name, combo)
+            else:
+                display_name = base_name
+
+            result.append((product.id, display_name))
+        return result
+
 
 class ProductAttributeValue(models.Model):
     _inherit = 'product.attribute.value'
