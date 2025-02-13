@@ -58,8 +58,12 @@ class ProductTemplate(models.Model):
                 # por ejemplo, mediante un XML ID en tu módulo:
                 color_lines = product.attribute_line_ids.filtered(lambda l: l.attribute_id.name.lower() == 'color')
                 if not color_lines or not any(line.value_ids for line in color_lines):
-                    raise ValidationError(_("Debe agregarse al menos un valor para el atributo 'Color' en el producto."))
-                    
+                    raise ValidationError(_("Debe agregarse al menos un valor para el atributo 'Color' en el producto."))                   
+
+
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+
     def name_get(self):
         # Llamamos al método original para conservar parte de la lógica (por ejemplo, el código)
         super_res = super(ProductProduct, self).name_get()
