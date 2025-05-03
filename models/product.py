@@ -92,11 +92,3 @@ class ProductProduct(models.Model):
         return result
 
 
-class ProductAttributeValue(models.Model):
-    _inherit = 'product.attribute.value'
-
-    code = fields.Char(string='Code', help="Codigo", readonly=True, default=lambda self: self._generate_code())
-    
-    @api.model
-    def _generate_code(self):
-        return self.env['ir.sequence'].next_by_code('product.attribute.value.code')
