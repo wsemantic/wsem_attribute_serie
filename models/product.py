@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-import json
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -16,30 +17,30 @@ class ProductTemplate(models.Model):
             if attribute_id:
                 existing_line = self.attribute_line_ids.filtered(lambda line: line.attribute_id == attribute_id)
 
-                # Obtener los valores de atributo ordenados por secuencia y nombre
+                # Get attribute values sorted by sequence and name
                 sorted_attribute_values = self.attribute_serie_id.item_ids.sorted(key=lambda item: (item.sequence or 0, item.attribute_value_id.name))
                 attribute_value_ids = sorted_attribute_values.mapped('attribute_value_id').ids
 
                 if existing_line:
-                    _logger.info(f"WSEM existia linea serie")
+                    _logger.info(f"WSEM existed as a series line")
                     existing_line.value_ids = [(6, 0, attribute_value_ids)]
                 else:
-                    _logger.info(f"WSEM creando serie")
+                    _logger.info(f"WSEM creating series")
                     self.attribute_line_ids = [(0, 0, {
                         'attribute_id': attribute_id.id,
                         'value_ids': [(6, 0, attribute_value_ids)]
                     })]
     
-    @api.constrains('type', 'serie_tallas', 'list_price', 'seller_ids', 'attribute_line_ids')
+    @api.constrains('is_storable', 'type', 'serie_tallas', 'list_price', 'seller_ids', 'attribute_line_ids')
     def _check_custom_fields(self):
-        # Se ejecuta para cada producto
+        # Runs for each product
         for product in self:
-            if product.type == 'product':  # Solo para productos almacenable
-                # Validar que se haya completado el campo serie_tallas
+            if product.is_storable:  # Only for storable products (in v18, is_storable replaces type == 'product')
+                # Validate that the size_series field has been completed.
                 if not product.attribute_serie_id:
                     raise ValidationError(_("Para los productos almacenable, el campo 'Serie Tallas' es obligatorio."))
 
-                # Validar que se haya ingresado un precio de venta mayor que cero
+                # Validate that a sale price greater than zero has been entered.
                 if not product.list_price or product.list_price <= 0:
                     raise ValidationError(_("Para los productos almacenable, el precio de venta debe ser mayor que cero."))
                 '''
@@ -53,9 +54,9 @@ class ProductTemplate(models.Model):
                         "Para los productos almacenable, al menos uno de los registros en Proveedores debe tener un precio de compra mayor que cero."
                     ))
                 '''
-                # Validar que exista al menos una línea de atributo para el Color
-                # Suponiendo que tienes un atributo para Color y que puedes obtener su referencia,
-                # por ejemplo, mediante un XML ID en tu módulo:
+                # Validate that at least one attribute line exists for Color
+                # Assuming you have an attribute for Color and that you can obtain its reference,
+                # for example, using an XML ID in your module:
                 color_lines = product.attribute_line_ids.filtered(lambda l: l.attribute_id.name.lower() == 'color')
                 if not color_lines or not any(line.value_ids for line in color_lines):
                     raise ValidationError(_("Debe agregarse al menos un valor para el atributo 'Color' en el producto."))                   
@@ -64,31 +65,27 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
-    def name_get(self):
-        # Llamamos al método original para conservar parte de la lógica (por ejemplo, el código)
-        super_res = super(ProductProduct, self).name_get()
-        # Convertimos el resultado a diccionario para fácil acceso
-        super_names = dict(super_res)
-        result = []
+    @api.depends('name', 'default_code', 'product_template_attribute_value_ids')
+    @api.depends_context('display_default_code')
+    def _compute_display_name(self):
+        # Migrado de name_get() (v16) a _compute_display_name() (v18)
         for product in self:
-            # Extraemos el nombre base que normalmente incluiría el código y el nombre del producto.
-            # Por ejemplo: "[ABC] Producto X"
-            base_name = super_names.get(product.id, product.name)
-            # Si queremos asegurarnos de no duplicar información (en caso de que ya tenga paréntesis),
-            # separamos el nombre base eliminando la parte de la variante que pudiera haber.
-            base_name = base_name.split(" (")[0]
+            # We extract the base name that would normally include the code and product name.
+            # For example: "[ABC] Product X"
+            name = product.name or ''
 
-            # Obtenemos todos los valores de los atributos, sin filtrar si son únicos o no.
+            # Add product code if it should be displayed
+            if self._context.get('display_default_code', True) and product.default_code:
+                name = "[%s] %s" % (product.default_code, name)
+
+            # Get all attribute values, without filtering if they are unique or not.
             attribute_values = product.product_template_attribute_value_ids.mapped('name')
             if attribute_values:
-                # Concatenamos todos los atributos (puedes cambiar la coma por otro separador si lo deseas)
+                # Concatenate all attributes (you can change the comma to another separator if you want)
                 combo = ", ".join(attribute_values)
-                # Concatenamos el nombre base con los atributos entre paréntesis
-                display_name = "%s (%s)" % (base_name, combo)
+                # Concatenate the base name with the attributes between parentheses
+                product.display_name = "%s (%s)" % (name, combo)
             else:
-                display_name = base_name
-
-            result.append((product.id, display_name))
-        return result
+                product.display_name = name
 
 

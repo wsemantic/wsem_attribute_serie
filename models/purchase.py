@@ -7,11 +7,11 @@ class PurchaseOrder(models.Model):
 
     @api.onchange('order_line')
     def _onchange_propagate_price_unit(self):
-        # Para cada product.template presente en las líneas, buscamos si alguna línea tiene un precio asignado y lo propagamos a las demás
+        # For each product.template present in the lines, we check if any line has a price assigned and propagate it to the others.
         for tmpl in self.order_line.mapped('product_id.product_tmpl_id'):
-            # Filtramos las líneas que pertenezcan a este product.template
+            # Filter lines that belong to this product.template
             lines = self.order_line.filtered(lambda l: l.product_id.product_tmpl_id == tmpl)
-            # Buscamos un precio definido (distinto de 0) en alguna de las líneas
+            # Search for a defined price (different from 0) in any of the lines
             defined_price = next((l.price_unit for l in lines if l.price_unit and l.price_unit != 0), False)
             if defined_price:
                 for line in lines:
