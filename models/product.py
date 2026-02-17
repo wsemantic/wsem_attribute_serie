@@ -65,6 +65,7 @@ class ProductProduct(models.Model):
     _inherit = 'product.product'
 
     def name_get(self):
+        #imprime en etiquetas datos de variante cuando hay una sola variante en template
         # Llamamos al método original para conservar parte de la lógica (por ejemplo, el código)
         super_res = super(ProductProduct, self).name_get()
         # Convertimos el resultado a diccionario para fácil acceso
