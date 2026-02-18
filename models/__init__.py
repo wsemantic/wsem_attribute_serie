@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from . import models,product,purchase
+from . import attribute_serie,product,purchase

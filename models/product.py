@@ -18,74 +18,53 @@ class ProductTemplate(models.Model):
                 existing_line = self.attribute_line_ids.filtered(lambda line: line.attribute_id == attribute_id)
 
                 # Get attribute values sorted by sequence and name
-                sorted_attribute_values = self.attribute_serie_id.item_ids.sorted(key=lambda item: (item.sequence or 0, item.attribute_value_id.name))
+                sorted_attribute_values = self.attribute_serie_id.item_ids.sorted(
+                    key=lambda item: (item.sequence or 0, item.attribute_value_id.name)
+                )
                 attribute_value_ids = sorted_attribute_values.mapped('attribute_value_id').ids
 
                 if existing_line:
-                    _logger.info(f"WSEM existed as a series line")
+                    _logger.info("WSEM existed as a series line")
                     existing_line.value_ids = [(6, 0, attribute_value_ids)]
                 else:
-                    _logger.info(f"WSEM creating series")
+                    _logger.info("WSEM creating series")
                     self.attribute_line_ids = [(0, 0, {
                         'attribute_id': attribute_id.id,
                         'value_ids': [(6, 0, attribute_value_ids)]
                     })]
-    
-    @api.constrains('is_storable', 'type', 'serie_tallas', 'list_price', 'seller_ids', 'attribute_line_ids')
+
+    @api.constrains('is_storable', 'type', 'attribute_serie_id', 'list_price', 'seller_ids', 'attribute_line_ids')
     def _check_custom_fields(self):
-        # Runs for each product
+        has_defined_series = bool(self.env['attribute.serie'].search_count([], limit=1))
+        purchase_context_models = {'purchase.order', 'purchase.order.line'}
+        is_purchase_context = self.env.context.get('active_model') in purchase_context_models
+
         for product in self:
             if product.is_storable:  # Only for storable products (in v18, is_storable replaces type == 'product')
-                # Validate that the size_series field has been completed.
-                if not product.attribute_serie_id:
-                    raise ValidationError(_("Para los productos almacenable, el campo 'Serie Tallas' es obligatorio."))
+                # Only require a series if at least one attribute.serie exists in the system.
+                if has_defined_series and not product.attribute_serie_id:
+                    raise ValidationError(_(
+                        "Para los productos almacenables, el campo 'Serie de atributos' es obligatorio cuando existen series definidas."
+                    ))
 
                 # Validate that a sale price greater than zero has been entered.
                 if not product.list_price or product.list_price <= 0:
-                    raise ValidationError(_("Para los productos almacenable, el precio de venta debe ser mayor que cero."))
-                '''
-                if not product.seller_ids:
-                    raise ValidationError(_(
-                        "Para los productos almacenable debe existir al menos un registro de precio de compra en los Proveedores."
-                    ))
-                # Opcional: verifica que al menos uno de los registros tenga un precio mayor que cero
-                if not any(s.price > 0 for s in product.seller_ids):
-                    raise ValidationError(_(
-                        "Para los productos almacenable, al menos uno de los registros en Proveedores debe tener un precio de compra mayor que cero."
-                    ))
-                '''
-                # Validate that at least one attribute line exists for Color
-                # Assuming you have an attribute for Color and that you can obtain its reference,
-                # for example, using an XML ID in your module:
+                    raise ValidationError(_("Para los productos almacenables, el precio de venta debe ser mayor que cero."))
+
+                # Validate vendors only when the product is managed from purchase orders or their lines.
+                if is_purchase_context:
+                    if not product.seller_ids:
+                        raise ValidationError(_(
+                            "Para los productos almacenables creados desde pedidos de compra debe existir al menos un proveedor."
+                        ))
+                    if not any(s.price > 0 for s in product.seller_ids):
+                        raise ValidationError(_(
+                            "Para los productos almacenables creados desde pedidos de compra, al menos un proveedor debe tener precio de compra mayor que cero."
+                        ))
+
                 color_lines = product.attribute_line_ids.filtered(lambda l: l.attribute_id.name.lower() == 'color')
                 if not color_lines or not any(line.value_ids for line in color_lines):
-                    raise ValidationError(_("Debe agregarse al menos un valor para el atributo 'Color' en el producto."))                   
-
-
-class ProductProduct(models.Model):
-    _inherit = 'product.product'
-
-    @api.depends('name', 'default_code', 'product_template_attribute_value_ids')
-    @api.depends_context('display_default_code')
-    def _compute_display_name(self):
-        # Migrado de name_get() (v16) a _compute_display_name() (v18)
-        for product in self:
-            # We extract the base name that would normally include the code and product name.
-            # For example: "[ABC] Product X"
-            name = product.name or ''
-
-            # Add product code if it should be displayed
-            if self._context.get('display_default_code', True) and product.default_code:
-                name = "[%s] %s" % (product.default_code, name)
-
-            # Get all attribute values, without filtering if they are unique or not.
-            attribute_values = product.product_template_attribute_value_ids.mapped('name')
-            if attribute_values:
-                # Concatenate all attributes (you can change the comma to another separator if you want)
-                combo = ", ".join(attribute_values)
-                # Concatenate the base name with the attributes between parentheses
-                product.display_name = "%s (%s)" % (name, combo)
-            else:
-                product.display_name = name
+                    raise ValidationError(_("Debe agregarse al menos un valor para el atributo 'Color' en el producto."))
+           
 
 
