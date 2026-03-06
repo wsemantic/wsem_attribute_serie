@@ -3,7 +3,7 @@
 			<record id="sequence_product_attribute_value_code" model="ir.sequence">
 				<field name="name">Product Attribute Value Code</field>
 				<field name="code">product.attribute.value.code</field>
-				<field name="prefix">ATTRVAL/</field>
+				<field name="prefix"></field>
 				<field name="padding">2</field>
 				<field name="company_id" eval="False"/>
 			</record>
@@ -11,7 +11,7 @@
 			<record id="sequence_product_template_ref" model="ir.sequence">
 				<field name="name">Product Template Ref</field>
 				<field name="code">product.template.ref</field>
-				<field name="prefix">ATTRVAL/</field>
+				<field name="prefix"></field>
 				<field name="padding">5</field>
 				<field name="company_id" eval="False"/>
 			</record>
