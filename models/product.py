@@ -85,6 +85,3 @@ class ProductTemplate(models.Model):
                     color_lines = product.attribute_line_ids.filtered(lambda l: l.attribute_id.name.lower() == 'color')
                     if not color_lines or not any(line.value_ids for line in color_lines):
                         raise ValidationError(_("Debe agregarse al menos un valor para el atributo 'Color' en el producto."))
-           
-
-
