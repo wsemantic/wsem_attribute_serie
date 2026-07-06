@@ -33,11 +33,35 @@ class ProductTemplate(models.Model):
                         'value_ids': [(6, 0, attribute_value_ids)]
                     })]
 
-    @api.constrains('is_storable', 'type', 'attribute_serie_id', 'list_price', 'seller_ids', 'attribute_line_ids')
+    @staticmethod
+    def _is_purchase_context(env):
+        # The custom checks only apply when the product is being managed from a
+        # purchase order / line (the "create & edit" matrix flow). Any other write
+        # path (UI product form, imports, the migrator, ...) is left untouched.
+        return env.context.get('active_model') in {'purchase.order', 'purchase.order.line'}
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        products = super().create(vals_list)
+        for vals, product in zip(vals_list, products):
+            # Detect a forgotten sale price: if 'list_price' didn't travel in vals,
+            # the core will have applied its default (1.0). A value that was
+            # explicitly provided -- even 0 or 1 -- is treated as edited and let
+            # through, regardless of context: the migrator and any import always
+            # send the price explicitly, so they pass untouched; only a UI creation
+            # that never touched the field falls into the default and is caught.
+            # This lives in create() (not the constraint) because only here can we
+            # tell a typed 1.0 from the default 1.0.
+            if product.is_storable and 'list_price' not in vals:
+                raise ValidationError(_(
+                    "Para los productos almacenables debe indicarse el precio de venta."
+                ))
+        return products
+
+    @api.constrains('is_storable', 'type', 'attribute_serie_id', 'seller_ids', 'attribute_line_ids')
     def _check_custom_fields(self):
         has_defined_series = bool(self.env['attribute.serie'].search_count([], limit=1))
-        purchase_context_models = {'purchase.order', 'purchase.order.line'}
-        is_purchase_context = self.env.context.get('active_model') in purchase_context_models
+        is_purchase_context = self._is_purchase_context(self.env)
 
         for product in self:
             if product.is_storable:  # Only for storable products (in v18, is_storable replaces type == 'product')
@@ -46,10 +70,6 @@ class ProductTemplate(models.Model):
                     raise ValidationError(_(
                         "Para los productos almacenables, el campo 'Serie de atributos' es obligatorio cuando existen series definidas."
                     ))
-
-                # Validate that a sale price greater than zero has been entered.
-                if not product.list_price or product.list_price <= 0:
-                    raise ValidationError(_("Para los productos almacenables, el precio de venta debe ser mayor que cero."))
 
                 # Validate vendors only when the product is managed from purchase orders or their lines.
                 if is_purchase_context:
