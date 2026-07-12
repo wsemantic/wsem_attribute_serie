@@ -20,7 +20,7 @@
     'version': '18.0.0.2',
 
     # any module necessary for this one to work correctly
-    'depends': ['sale','wsem_pos'], 
+    'depends': ['sale','purchase','wsem_pos'],
 
     'assets': {
     },

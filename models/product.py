@@ -33,26 +33,6 @@ class ProductTemplate(models.Model):
                         'value_ids': [(6, 0, attribute_value_ids)]
                     })]
 
-    @staticmethod
-    def _is_purchase_context(env):
-        # The custom checks only apply when the product is being managed from a
-        # purchase order / line. Any other write path (UI product form, imports,
-        # the migrator, POS, ...) is left untouched.
-        ctx = env.context
-        if ctx.get('active_model') in {'purchase.order', 'purchase.order.line'}:
-            return True
-        # "Crear y editar" un producto desde la línea de compra NO trae
-        # active_model, pero sí marcadores del origen compra: 'quotation_only'
-        # (lo pone el contexto del campo product en purchase) y/o la acción web
-        # 'purchase' en params. Con esto la constraint (serie/color/proveedor/
-        # precio) vuelve a exigirse al crear la plantilla desde una compra.
-        if ctx.get('quotation_only'):
-            return True
-        params = ctx.get('params') or {}
-        if params.get('action') == 'purchase':
-            return True
-        return False
-
     @api.model
     def default_get(self, fields_list):
         res = super().default_get(fields_list)
@@ -66,15 +46,6 @@ class ProductTemplate(models.Model):
         # el difunto 'detailed_type' de v16.
         if 'is_storable' in fields_list and res.get('type', 'consu') == 'consu':
             res['is_storable'] = True
-        # Al crear el producto desde una línea de compra, el contexto trae el
-        # proveedor del pedido ('partner_id'); pre-rellenamos una línea de
-        # proveedor con él para no tener que seleccionarlo (solo falta teclear el
-        # precio, que la constraint exige > 0). Solo en contexto de compra.
-        if 'seller_ids' in fields_list and not res.get('seller_ids') \
-                and self._is_purchase_context(self.env):
-            partner_id = self.env.context.get('partner_id')
-            if partner_id:
-                res['seller_ids'] = [(0, 0, {'partner_id': partner_id})]
         return res
 
     @api.model_create_multi
@@ -86,49 +57,19 @@ class ProductTemplate(models.Model):
         for vals in vals_list:
             if vals.get('type', 'consu') == 'consu':
                 vals.setdefault('is_storable', True)
-        products = super().create(vals_list)
-        # Precio de venta obligatorio en almacenables SOLO en contexto de compra
-        # (junto al resto de reglas de _check_custom_fields). Detecta un precio
-        # olvidado: si 'list_price' no viajó en vals el core aplicó su default
-        # (1.0); un valor provisto -- aunque sea 0 o 1 -- se considera editado y
-        # pasa (el migrador e importaciones siempre lo envían explícito). Vive en
-        # create() (no en la constraint) porque solo aquí se distingue un 1.0
-        # tecleado del 1.0 por defecto.
-        if self._is_purchase_context(self.env):
-            for vals, product in zip(vals_list, products):
-                if product.is_storable and 'list_price' not in vals:
-                    raise ValidationError(_(
-                        "Para los productos almacenables creados desde pedidos de compra debe indicarse el precio de venta."
-                    ))
-        return products
+        return super().create(vals_list)
 
-    @api.constrains('is_storable', 'type', 'attribute_serie_id', 'seller_ids', 'attribute_line_ids')
-    def _check_custom_fields(self):
+    @api.constrains('is_storable', 'type', 'attribute_serie_id')
+    def _check_serie_required(self):
+        # Única regla de compra que se queda en este módulo: exigir "Serie de
+        # atributos" cuando existen series definidas. El resto de reglas de compra
+        # (proveedor, precio, talla+color) viven en wsem_pos. _is_purchase_context
+        # se hereda de wsem_pos (product.template).
         has_defined_series = bool(self.env['attribute.serie'].search_count([], limit=1))
-        is_purchase_context = self._is_purchase_context(self.env)
-
+        if not has_defined_series or not self._is_purchase_context(self.env):
+            return
         for product in self:
-            if product.is_storable:  # Only for storable products (in v18, is_storable replaces type == 'product')
-                # Series, vendors and color are only required when the storable
-                # product is managed from purchase orders or their lines. Outside
-                # a purchase context (UI/POS/quick-create) a storable product may
-                # be created without a series, so defaulting is_storable=True does
-                # not block normal product creation.
-                if is_purchase_context:
-                    # Only require a series if at least one attribute.serie exists.
-                    if has_defined_series and not product.attribute_serie_id:
-                        raise ValidationError(_(
-                            "Para los productos almacenables creados desde pedidos de compra, el campo 'Serie de atributos' es obligatorio cuando existen series definidas."
-                        ))
-                    if not product.seller_ids:
-                        raise ValidationError(_(
-                            "Para los productos almacenables creados desde pedidos de compra debe existir al menos un proveedor."
-                        ))
-                    if not any(s.price > 0 for s in product.seller_ids):
-                        raise ValidationError(_(
-                            "Para los productos almacenables creados desde pedidos de compra, al menos un proveedor debe tener precio de compra mayor que cero."
-                        ))
-
-                    color_lines = product.attribute_line_ids.filtered(lambda l: l.attribute_id.name.lower() == 'color')
-                    if not color_lines or not any(line.value_ids for line in color_lines):
-                        raise ValidationError(_("Debe agregarse al menos un valor para el atributo 'Color' en el producto."))
+            if product.is_storable and not product.attribute_serie_id:
+                raise ValidationError(_(
+                    "Para los productos almacenables creados desde pedidos de compra, el campo 'Serie de atributos' es obligatorio cuando existen series definidas."
+                ))

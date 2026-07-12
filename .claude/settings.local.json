@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m py_compile wsem_pos/models/models.py wsem_attribute_serie/models/product.py ws_shopify/hooks.py)",
+      "Bash(python3 -c \"import odoo; print\\(odoo.__file__\\)\")",
+      "Read(//opt/odoo18/**)",
+      "Read(//etc/**)",
+      "Bash(sudo -u postgres psql -lqt)",
+      "Bash(psql -lqt)",
+      "Bash(/opt/odoo18/venv/bin/python odoo-bin *)",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(export PGPASSWORD=admin)",
+      "Bash(psql -h localhost -p 5433 -U odoo -d wsem_test_2189 -tAc \"select name,state from ir_module_module where name in \\('wsem_pos','wsem_attribute_serie','ws_shopify'\\);\")",
+      "Bash(dmesg)",
+      "Bash(/opt/odoo18/venv/bin/python -u odoo-bin -c /etc/odoo18.conf -d wsem_test_2189 --db_host=localhost --db_port=5433 -r odoo -w admin -i wsem_attribute_serie --stop-after-init --without-demo=all --log-level=info --logfile=/tmp/claude-0/-mnt-c-GitHub-wsem-attribute-serie/b6e415f9-e17f-445f-b27e-c167bfc3a603/scratchpad/serie.log)",
+      "Bash(/opt/odoo18/venv/bin/python -u odoo-bin -c /etc/odoo18.conf -d wsem_test_2189 --db_host=localhost --db_port=5433 -r odoo -w admin -i wsem_attribute_serie,ws_shopify --stop-after-init --without-demo=all --log-level=info --logfile=/tmp/claude-0/-mnt-c-GitHub-wsem-attribute-serie/b6e415f9-e17f-445f-b27e-c167bfc3a603/scratchpad/final.log)",
+      "Bash(dropdb -h localhost -p 5433 -U odoo wsem_test_2189)",
+      "Bash(psql -h localhost -p 5433 -U odoo -lqt)",
+      "Bash(psql -h localhost -p 5433 -U odoo -d postgres -tAc \"select count\\(*\\), state from pg_stat_activity where datname='azabache' group by state;\")",
+      "Bash(/opt/odoo18/venv/bin/python -u odoo-bin -c /etc/odoo18.conf -d azabache --db_host=localhost --db_port=5433 -r odoo -w admin -u wsem_pos,wsem_attribute_serie,ws_shopify --stop-after-init --no-http --logfile=/tmp/claude-0/-mnt-c-GitHub-wsem-attribute-serie/b6e415f9-e17f-445f-b27e-c167bfc3a603/scratchpad/azabache_upd.log)",
+      "Bash(psql -h localhost -p 5433 -U odoo -d azabache -tAc \"select name, talla_color_requerido_en_compras from res_company;\")",
+      "Bash(systemctl list-units *)",
+      "Bash(systemctl status *)",
+      "Bash(sudo systemctl restart odoo18)",
+      "Bash(systemctl is-active *)",
+      "Bash(awk '{print \"PID=\"$2, \"start=\"$9}')",
+      "Bash(journalctl -u odoo18 --since \"2 min ago\" --no-pager)",
+      "Bash(/opt/odoo18/venv/bin/python -m py_compile wsem_pos/models/models.py ws_shopify/models/product.py wsem_attribute_serie/models/product.py)"
+    ]
+  }
+}
