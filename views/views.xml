@@ -65,6 +65,23 @@
             </field>
         </record>
 
+        <!-- Permitir abrir la cuadrícula de variantes (lápiz) en pedidos de compra
+             ya confirmados. Odoo pone product_template_id en solo lectura a partir
+             del estado 'purchase', lo que oculta el botón de configuración del
+             widget pol_product_many2one. Al quitar esa restricción se pueden
+             modificar cantidades desde la matriz; Odoo se encarga de generar la
+             recepción adicional y de recalcular los estados de recepción/factura. -->
+        <record id="purchase_order_form_matrix_editable" model="ir.ui.view">
+            <field name="name">purchase.order.form.matrix.editable</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase_product_matrix.purchase_order_form_matrix" />
+            <field name="arch" type="xml">
+                <xpath expr="//list/field[@name='product_template_id']" position="attributes">
+                    <attribute name="readonly">state == 'cancel'</attribute>
+                </xpath>
+            </field>
+        </record>
+
 
     </data>
 </odoo>
